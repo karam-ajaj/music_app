@@ -101,11 +101,16 @@ async function searchArtist(artist: ArtistEntry): Promise<Track[]> {
 
 async function searchBatched(artists: ArtistEntry[], batchSize: number): Promise<Track[]> {
   const allTracks: Track[] = [];
+  let totalFromBatches = 0;
   for (let i = 0; i < artists.length; i += batchSize) {
     const batch = artists.slice(i, i + batchSize);
     const results = await Promise.all(batch.map((a) => searchArtist(a).catch(() => [])));
-    allTracks.push(...results.flat());
+    const batchTracks = results.flat();
+    totalFromBatches += batchTracks.length;
+    allTracks.push(...batchTracks);
+    console.log(`batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(artists.length / batchSize)}: ${batch.length} artists → ${batchTracks.length} tracks (total: ${allTracks.length})`);
   }
+  console.log('searchBatched done:', allTracks.length, 'tracks from', artists.length, 'artists');
   return allTracks;
 }
 
