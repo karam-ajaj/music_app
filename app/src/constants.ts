@@ -16,7 +16,7 @@ export interface RegionData {
   key: RegionKey;
   labelEn: string;
   labelAr: string;
-  artists: string[];
+  artists: { en: string; ar: string }[];
 }
 
 export const REGIONS: RegionData[] = [
@@ -25,11 +25,26 @@ export const REGIONS: RegionData[] = [
     labelEn: 'Egypt',
     labelAr: 'مصر',
     artists: [
-      'Amr Diab', 'Umm Kulthum', 'Abdel Halim Hafez', 'Mohamed Mounir',
-      'Mohamed Fouad', 'Hani Shaker', 'Warda',
-      'Sherine', 'Tamer Hosny', 'Mohamed Hamaki', 'Angham',
-      'Ehab Tawfik', 'Hamid El Shaeri', 'Mostafa Amar', 'Hisham Abbas',
-      'Latifa', 'Ali El Haggar', 'Medhat Saleh', 'Mohamed Mohie', 'Hakim',
+      { en: 'Amr Diab', ar: 'عمرو دياب' },
+      { en: 'Umm Kulthum', ar: 'أم كلثوم' },
+      { en: 'Abdel Halim Hafez', ar: 'عبد الحليم حافظ' },
+      { en: 'Mohamed Mounir', ar: 'محمد منير' },
+      { en: 'Mohamed Fouad', ar: 'محمد فؤاد' },
+      { en: 'Hani Shaker', ar: 'هاني شاكر' },
+      { en: 'Warda', ar: 'وردة' },
+      { en: 'Sherine', ar: 'شيرين' },
+      { en: 'Tamer Hosny', ar: 'تامر حسني' },
+      { en: 'Mohamed Hamaki', ar: 'محمد حماقي' },
+      { en: 'Angham', ar: 'أنغام' },
+      { en: 'Ehab Tawfik', ar: 'إيهاب توفيق' },
+      { en: 'Hamid El Shaeri', ar: 'حميد الشاعري' },
+      { en: 'Mostafa Amar', ar: 'مصطفى قمر' },
+      { en: 'Hisham Abbas', ar: 'هشام عباس' },
+      { en: 'Latifa', ar: 'لطيفة' },
+      { en: 'Ali El Haggar', ar: 'علي الحجار' },
+      { en: 'Medhat Saleh', ar: 'مدحت صالح' },
+      { en: 'Mohamed Mohie', ar: 'محمد محيي' },
+      { en: 'Hakim', ar: 'حكيم' },
     ],
   },
   {
@@ -37,12 +52,28 @@ export const REGIONS: RegionData[] = [
     labelEn: 'Levant',
     labelAr: 'بلاد الشام',
     artists: [
-      'Fairuz', 'Nancy Ajram', 'Ragheb Alama', 'Wael Kfoury', 'Elissa',
-      'Majida El Roumi', 'Sabah', 'Haifa Wehbe', 'Najwa Karam',
-      'Carole Samaha', 'Nawal El Zoghbi', 'Melhem Barakat',
-      'Wadih El Safi', 'Ziad Rahbani', 'Joseph Attieh',
-      'George Wassouf', 'Assala Nasri', 'Mayada El Hennawy', 'Sabah Fakhri',
-      'Diana Karazon', 'Omar Al Abdallat', 'Toni Qattan',
+      { en: 'Fairuz', ar: 'فيروز' },
+      { en: 'Nancy Ajram', ar: 'نانسي عجرم' },
+      { en: 'Ragheb Alama', ar: 'راغب علامة' },
+      { en: 'Wael Kfoury', ar: 'وائل كفوري' },
+      { en: 'Elissa', ar: 'إليسا' },
+      { en: 'Majida El Roumi', ar: 'ماجدة الرومي' },
+      { en: 'Sabah', ar: 'صباح' },
+      { en: 'Haifa Wehbe', ar: 'هيفاء وهبي' },
+      { en: 'Najwa Karam', ar: 'نجوى كرم' },
+      { en: 'Carole Samaha', ar: 'كارول سماحة' },
+      { en: 'Nawal El Zoghbi', ar: 'نوال الزغبي' },
+      { en: 'Melhem Barakat', ar: 'ملحم بركات' },
+      { en: 'Wadih El Safi', ar: 'وديع الصافي' },
+      { en: 'Ziad Rahbani', ar: 'زياد الرحباني' },
+      { en: 'Joseph Attieh', ar: 'جوزيف عطية' },
+      { en: 'George Wassouf', ar: 'جورج وسوف' },
+      { en: 'Assala Nasri', ar: 'أصالة نصري' },
+      { en: 'Mayada El Hennawy', ar: 'ميادة الحناوي' },
+      { en: 'Sabah Fakhri', ar: 'صباح فخري' },
+      { en: 'Diana Karazon', ar: 'ديانا كرزون' },
+      { en: 'Omar Al Abdallat', ar: 'عمر العبداللات' },
+      { en: 'Toni Qattan', ar: 'طوني قطان' },
     ],
   },
   {
@@ -50,9 +81,14 @@ export const REGIONS: RegionData[] = [
     labelEn: 'Gulf',
     labelAr: 'الخليج',
     artists: [
-      'Abdul Majeed Abdullah', 'Rashed Al Majed', 'Mohammed Abdu',
-      'Talal Maddah', 'Abadi Al Johar', 'Nabil Shuail',
-      'Abdallah Al Rowaished', 'Nawal Al Kuwaitia',
+      { en: 'Abdul Majeed Abdullah', ar: 'عبد المجيد عبد الله' },
+      { en: 'Rashed Al Majed', ar: 'راشد الماجد' },
+      { en: 'Mohammed Abdu', ar: 'محمد عبده' },
+      { en: 'Talal Maddah', ar: 'طلال مداح' },
+      { en: 'Abadi Al Johar', ar: 'عبادي الجوهر' },
+      { en: 'Nabil Shuail', ar: 'نبيل شعيل' },
+      { en: 'Abdallah Al Rowaished', ar: 'عبد الله الرويشد' },
+      { en: 'Nawal Al Kuwaitia', ar: 'نوال الكويتية' },
     ],
   },
   {
@@ -60,7 +96,9 @@ export const REGIONS: RegionData[] = [
     labelEn: 'Iraq',
     labelAr: 'العراق',
     artists: [
-      'Kazem Al Saher', 'Ilham Al Madfai', 'Saadoun Jaber',
+      { en: 'Kazem Al Saher', ar: 'كاظم الساهر' },
+      { en: 'Ilham Al Madfai', ar: 'إلهام المدفعي' },
+      { en: 'Saadoun Jaber', ar: 'سعدون جابر' },
     ],
   },
   {
@@ -68,8 +106,12 @@ export const REGIONS: RegionData[] = [
     labelEn: 'Maghreb',
     labelAr: 'المغرب العربي',
     artists: [
-      'Cheb Khaled', 'Samira Said', 'Cheb Mami', 'Faudel',
-      'Rachid Taha', 'Cheba Zahouania',
+      { en: 'Cheb Khaled', ar: 'الشاب خالد' },
+      { en: 'Samira Said', ar: 'سميرة سعيد' },
+      { en: 'Cheb Mami', ar: 'الشاب مامي' },
+      { en: 'Faudel', ar: 'فوديل' },
+      { en: 'Rachid Taha', ar: 'رشيد طه' },
+      { en: 'Cheba Zahouania', ar: 'الشابة الزهوانية' },
     ],
   },
 ];

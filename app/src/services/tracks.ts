@@ -12,6 +12,8 @@ interface iTunesResult {
   releaseDate: string;
 }
 
+type ArtistEntry = { en: string; ar: string };
+
 function shuffle<T>(array: T[]): T[] {
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
@@ -21,44 +23,62 @@ function shuffle<T>(array: T[]): T[] {
   return arr;
 }
 
-function toTrack(item: iTunesResult): Track {
-  return {
-    id: String(item.trackId),
-    name: item.trackName,
-    artists: [item.artistName],
-    album: item.collectionName,
-    albumArt: item.artworkUrl100?.replace('100x100', '600x600') || '',
-    year: (item.releaseDate || '').slice(0, 4),
-    durationMs: item.trackTimeMillis,
-    previewUrl: item.previewUrl,
-  };
-}
-
 const DECADE_RANGE: Record<DecadeKey, [number, number]> = {
   '70s': [1970, 1979],
   '80s': [1980, 1989],
   '90s': [1990, 1999],
 };
 
-async function searchArtist(artist: string): Promise<Track[]> {
+async function fetchFromItunes(term: string): Promise<iTunesResult[]> {
   try {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 8000);
-    const query = encodeURIComponent(artist);
+    const query = encodeURIComponent(term);
     const url = `https://itunes.apple.com/search?term=${query}&country=eg&entity=song&limit=30`;
     const res = await fetch(url, { signal: controller.signal });
     clearTimeout(timer);
     const json = await res.json();
-    const results = (json.results || []) as iTunesResult[];
-    return results
-      .filter((r) => r.previewUrl && r.trackName && r.artistName)
-      .map(toTrack);
+    return (json.results || []) as iTunesResult[];
   } catch {
     return [];
   }
 }
 
-async function searchBatched(artists: string[], batchSize: number): Promise<Track[]> {
+async function searchArtist(artist: ArtistEntry): Promise<Track[]> {
+  const [enResults, arResults] = await Promise.all([
+    fetchFromItunes(artist.en),
+    fetchFromItunes(artist.ar),
+  ]);
+
+  const arNames = new Map<string, string>();
+  for (const r of arResults) {
+    if (r.trackId && r.trackName) arNames.set(String(r.trackId), r.trackName);
+  }
+
+  const trackMap = new Map<string, Track>();
+  for (const r of [...arResults, ...enResults]) {
+    if (!r.previewUrl || !r.trackName || !r.artistName) continue;
+    const id = String(r.trackId);
+    if (trackMap.has(id)) continue;
+    const isArResult = arNames.has(id);
+    trackMap.set(id, {
+      id,
+      name: isArResult ? arNames.get(id)! : r.trackName,
+      nameAr: arNames.get(id) || r.trackName,
+      artists: [artist.en],
+      artistsAr: [artist.ar],
+      album: r.collectionName,
+      albumArt: (r.artworkUrl100 || '').replace('100x100', '600x600'),
+      year: (r.releaseDate || '').slice(0, 4),
+      durationMs: r.trackTimeMillis,
+      previewUrl: r.previewUrl,
+    });
+  }
+
+  return [...trackMap.values()];
+}
+
+async function searchBatched(artists: ArtistEntry[], batchSize: number): Promise<Track[]> {
   const allTracks: Track[] = [];
   for (let i = 0; i < artists.length; i += batchSize) {
     const batch = artists.slice(i, i + batchSize);
@@ -80,14 +100,14 @@ function filterByDecades(tracks: Track[], decades: DecadeKey[]): Track[] {
   });
 }
 
-function artistsForRegions(regions: RegionKey[]): string[] {
+function artistsForRegions(regions: RegionKey[]): ArtistEntry[] {
   if (regions.length === ALL_REGIONS.length) return ALL_ARTISTS;
-  const set = new Set<string>();
+  const map = new Map<string, ArtistEntry>();
   for (const r of regions) {
     const data = REGIONS.find((rd) => rd.key === r);
-    if (data) data.artists.forEach((a) => set.add(a));
+    if (data) data.artists.forEach((a) => map.set(a.en, a));
   }
-  return [...set];
+  return [...map.values()];
 }
 
 export async function fetchTracks(decades: DecadeKey[], regions: RegionKey[]): Promise<Track[]> {

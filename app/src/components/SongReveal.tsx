@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, Dimensions } from 'react-native';
 import { Track } from '../types';
 import { theme } from '../theme';
+import { useLang } from '../../App';
 
 interface SongRevealProps {
   track: Track;
@@ -10,6 +11,12 @@ interface SongRevealProps {
 const ART_SIZE = Dimensions.get('window').width * 0.5;
 
 export function SongReveal({ track }: SongRevealProps) {
+  const { lang } = useLang();
+  const isAr = lang === 'ar';
+
+  const displayName = isAr && track.nameAr ? track.nameAr : track.name;
+  const displayArtist = isAr ? track.artistsAr.join(' \u060C ') : track.artists.join(', ');
+
   return (
     <View style={styles.container}>
       <View style={styles.card}>
@@ -20,11 +27,11 @@ export function SongReveal({ track }: SongRevealProps) {
 
         <View style={styles.info}>
           <Text style={styles.title} numberOfLines={2}>
-            {track.name}
+            {displayName}
           </Text>
 
           <Text style={styles.artist} numberOfLines={1}>
-            {track.artists.join(', ')}
+            {displayArtist}
           </Text>
 
           <View style={styles.details}>

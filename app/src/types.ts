@@ -1,7 +1,9 @@
 export interface Track {
   id: string;
   name: string;
+  nameAr: string;
   artists: string[];
+  artistsAr: string[];
   album: string;
   albumArt: string;
   year: string;
