@@ -117,7 +117,7 @@ export function GameScreen() {
             ) : (
               <View style={styles.demoNotice}>
                 <Text style={styles.demoNoticeText}>
-                  Demo Mode{'\n'}Run extraction script for audio
+                  Loading preview...
                 </Text>
               </View>
             )}

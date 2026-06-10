@@ -7,7 +7,6 @@ export interface Track {
   year: string;
   durationMs: number;
   previewUrl: string;
-  spotifyUrl: string;
 }
 
 export type GamePhase = 'playing' | 'revealed';

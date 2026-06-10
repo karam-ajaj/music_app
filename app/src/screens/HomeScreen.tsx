@@ -17,7 +17,7 @@ export function HomeScreen({ onStart, loading }: HomeScreenProps) {
         </View>
         <Text style={styles.title}>{APP_NAME}</Text>
         <Text style={styles.subtitle}>
-          Guess the Arabic song.{'\n'}Listen to the preview, then reveal the answer.
+          Arabic Music Trivia{'\n'}Listen to a preview, guess the song.
         </Text>
       </View>
 
@@ -35,7 +35,7 @@ export function HomeScreen({ onStart, loading }: HomeScreenProps) {
       </TouchableOpacity>
 
       <Text style={styles.footer}>
-        80s & 90s Arabic Classics
+        Powered by iTunes
       </Text>
     </View>
   );

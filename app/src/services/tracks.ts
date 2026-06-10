@@ -31,7 +31,6 @@ function toTrack(item: iTunesResult): Track {
     year: (item.releaseDate || '').slice(0, 4),
     durationMs: item.trackTimeMillis,
     previewUrl: item.previewUrl,
-    spotifyUrl: '',
   };
 }
 

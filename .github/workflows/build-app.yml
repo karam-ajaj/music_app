@@ -39,10 +39,10 @@ jobs:
 
       - name: Generate keystore
         run: |
-          keytool -genkey -v -keystore release.keystore -alias arabichitster \
+          keytool -genkey -v -keystore release.keystore -alias nagham \
             -keyalg RSA -keysize 2048 -validity 10000 \
             -storepass android -keypass android \
-            -dname "CN=Arabic Hitster, OU=Dev, O=ArabicHitster, L=Unknown, S=Unknown, C=US"
+            -dname "CN=Nagham, OU=Dev, O=Nagham, L=Unknown, S=Unknown, C=US"
 
       - name: Generate native Android project
         run: npx expo prebuild --platform android --clean
@@ -52,13 +52,13 @@ jobs:
         env:
           ORG_GRADLE_PROJECT_android.injected.signing.store.file: ../release.keystore
           ORG_GRADLE_PROJECT_android.injected.signing.store.password: android
-          ORG_GRADLE_PROJECT_android.injected.signing.key.alias: arabichitster
+          ORG_GRADLE_PROJECT_android.injected.signing.key.alias: nagham
           ORG_GRADLE_PROJECT_android.injected.signing.key.password: android
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: arabic-hitster
+          name: nagham
           path: app/android/app/build/outputs/apk/release/app-release.apk
 
       - name: Upload to Release

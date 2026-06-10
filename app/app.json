@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Arabic Hitster",
-    "slug": "arabic-hitster",
+    "name": "Nagham",
+    "slug": "nagham",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -16,10 +16,10 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.karamajaj.arabichitster"
+      "bundleIdentifier": "com.karamajaj.nagham"
     },
     "android": {
-      "package": "com.karamajaj.arabichitster",
+      "package": "com.karamajaj.nagham",
       "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",

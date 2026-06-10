@@ -1,4 +1,4 @@
-export const APP_NAME = 'Arabic Hitster';
+export const APP_NAME = 'Nagham';
 
 export const PREVIEW_DURATION_MS = 12000;
 
