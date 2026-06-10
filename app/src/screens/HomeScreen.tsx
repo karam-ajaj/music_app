@@ -11,8 +11,8 @@ interface HomeScreenProps {
 export function HomeScreen({ onStart }: HomeScreenProps) {
   const __ = useT();
   const { lang, setLang } = useLang();
-  const [decades, setDecades] = React.useState<DecadeKey[]>([...ALL_DECADES]);
-  const [regions, setRegions] = React.useState<RegionKey[]>([...ALL_REGIONS]);
+  const [decades, setDecades] = React.useState<DecadeKey[]>([]);
+  const [regions, setRegions] = React.useState<RegionKey[]>([]);
 
   const toggleLang = () => setLang(lang === 'en' ? 'ar' : 'en');
 
