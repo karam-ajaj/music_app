@@ -107,7 +107,7 @@ export function GameScreen({ decades, regions, onBack }: GameScreenProps) {
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={onBack} activeOpacity={0.7} style={styles.backBtn}>
-          <Text style={styles.backBtnText}>← {__('home')}</Text>
+          <Text style={styles.backBtnText}>⌂</Text>
         </TouchableOpacity>
         <Text style={styles.counter}>
           {playedCount} / {totalSongs}
@@ -198,8 +198,7 @@ const styles = StyleSheet.create({
   },
   backBtnText: {
     color: theme.colors.primary,
-    fontSize: theme.fontSize.lg,
-    fontWeight: '700',
+    fontSize: theme.fontSize.xl,
   },
   counter: {
     color: theme.colors.textMuted,
