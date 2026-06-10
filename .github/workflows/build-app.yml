@@ -39,7 +39,7 @@ jobs:
 
       - name: Generate keystore
         run: |
-          keytool -genkey -v -keystore app/release.keystore -alias arabichitster \
+          keytool -genkey -v -keystore release.keystore -alias arabichitster \
             -keyalg RSA -keysize 2048 -validity 10000 \
             -storepass android -keypass android \
             -dname "CN=Arabic Hitster, OU=Dev, O=ArabicHitster, L=Unknown, S=Unknown, C=US"
