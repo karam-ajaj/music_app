@@ -50,21 +50,42 @@ async function searchArtist(artist: ArtistEntry): Promise<Track[]> {
     fetchFromItunes(artist.ar),
   ]);
 
-  const arNames = new Map<string, string>();
+  const arNameByUrl = new Map<string, string>();
   for (const r of arResults) {
-    if (r.trackId && r.trackName) arNames.set(String(r.trackId), r.trackName);
+    if (r.previewUrl && r.trackName) {
+      arNameByUrl.set(r.previewUrl, r.trackName);
+    }
   }
 
   const trackMap = new Map<string, Track>();
-  for (const r of [...arResults, ...enResults]) {
+  for (const r of enResults) {
     if (!r.previewUrl || !r.trackName || !r.artistName) continue;
     const id = String(r.trackId);
     if (trackMap.has(id)) continue;
-    const isArResult = arNames.has(id);
+    const arName = arNameByUrl.get(r.previewUrl) || r.trackName;
     trackMap.set(id, {
       id,
-      name: isArResult ? arNames.get(id)! : r.trackName,
-      nameAr: arNames.get(id) || r.trackName,
+      name: r.trackName,
+      nameAr: arName,
+      artists: [artist.en],
+      artistsAr: [artist.ar],
+      album: r.collectionName,
+      albumArt: (r.artworkUrl100 || '').replace('100x100', '600x600'),
+      year: (r.releaseDate || '').slice(0, 4),
+      durationMs: r.trackTimeMillis,
+      previewUrl: r.previewUrl,
+    });
+  }
+
+  for (const r of arResults) {
+    if (!r.previewUrl || !r.trackName || !r.artistName) continue;
+    const id = String(r.trackId);
+    if (trackMap.has(id)) continue;
+    if ([...trackMap.values()].some((t) => t.previewUrl === r.previewUrl)) continue;
+    trackMap.set(id, {
+      id,
+      name: r.trackName,
+      nameAr: r.trackName,
       artists: [artist.en],
       artistsAr: [artist.ar],
       album: r.collectionName,
