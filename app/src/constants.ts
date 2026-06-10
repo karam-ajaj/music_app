@@ -47,6 +47,9 @@ export const REGIONS: RegionData[] = [
       { en: 'Medhat Saleh', ar: 'مدحت صالح' },
       { en: 'Mohamed Mohie', ar: 'محمد محيي' },
       { en: 'Hakim', ar: 'حكيم' },
+      { en: 'Bahaa Sultan', ar: 'بهاء سلطان' },
+      { en: 'Hamada Helal', ar: 'حمادة هلال' },
+      { en: 'Samo Zein', ar: 'سامو زين' },
     ],
   },
   {
@@ -76,6 +79,11 @@ export const REGIONS: RegionData[] = [
       { en: 'Diana Karazon', ar: 'ديانا كرزون' },
       { en: 'Omar Al Abdallat', ar: 'عمر العبداللات' },
       { en: 'Toni Qattan', ar: 'طوني قطان' },
+      { en: 'Ramy Ayach', ar: 'رامي عياش' },
+      { en: 'Myriam Fares', ar: 'ميريام فارس' },
+      { en: 'Fares Karam', ar: 'فارس كرم' },
+      { en: 'Amal Hijazi', ar: 'أمل حجازي' },
+      { en: 'Pascale Machaalani', ar: 'باسكال مشعلاني' },
     ],
   },
   {
@@ -91,6 +99,8 @@ export const REGIONS: RegionData[] = [
       { en: 'Nabil Shuail', ar: 'نبيل شعيل' },
       { en: 'Abdallah Al Rowaished', ar: 'عبد الله الرويشد' },
       { en: 'Nawal Al Kuwaitia', ar: 'نوال الكويتية' },
+      { en: 'Ahlam', ar: 'أحلام' },
+      { en: 'Hussain Al Jasmi', ar: 'حسين الجسمي' },
     ],
   },
   {
@@ -101,6 +111,8 @@ export const REGIONS: RegionData[] = [
       { en: 'Kazem Al Saher', ar: 'كاظم الساهر' },
       { en: 'Ilham Al Madfai', ar: 'إلهام المدفعي' },
       { en: 'Saadoun Jaber', ar: 'سعدون جابر' },
+      { en: 'Hatem Al Iraqi', ar: 'حاتم العراقي' },
+      { en: 'Rida Al Abdullah', ar: 'رضا العبد الله' },
     ],
   },
   {
@@ -114,6 +126,8 @@ export const REGIONS: RegionData[] = [
       { en: 'Faudel', ar: 'فوديل' },
       { en: 'Rachid Taha', ar: 'رشيد طه' },
       { en: 'Cheba Zahouania', ar: 'الشابة الزهوانية' },
+      { en: 'Cheb Hasni', ar: 'الشاب حسني' },
+      { en: 'Cheb Bilal', ar: 'الشاب بلال' },
     ],
   },
 ];
