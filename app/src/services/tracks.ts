@@ -1,5 +1,5 @@
 import { Track } from '../types';
-import { ITUNES_ARABIC_ARTISTS } from '../constants';
+import { ITUNES_ARABIC_ARTISTS, Decade } from '../constants';
 
 interface iTunesResult {
   trackId: number;
@@ -34,9 +34,16 @@ function toTrack(item: iTunesResult): Track {
   };
 }
 
+const DECADE_RANGE: Record<Decade, [number, number]> = {
+  '70s': [1970, 1979],
+  '80s': [1980, 1989],
+  '90s': [1990, 1999],
+  all: [0, 9999],
+};
+
 async function searchArtist(artist: string): Promise<Track[]> {
   const query = encodeURIComponent(artist);
-  const url = `https://itunes.apple.com/search?term=${query}&country=eg&entity=song&limit=20`;
+  const url = `https://itunes.apple.com/search?term=${query}&country=eg&entity=song&limit=30`;
   const res = await fetch(url);
   const json = await res.json();
   const results = (json.results || []) as iTunesResult[];
@@ -45,12 +52,20 @@ async function searchArtist(artist: string): Promise<Track[]> {
     .map(toTrack);
 }
 
-export async function fetchTracks(): Promise<Track[]> {
+function filterByDecade(tracks: Track[], decade: Decade): Track[] {
+  const [start, end] = DECADE_RANGE[decade];
+  return tracks.filter((t) => {
+    const y = parseInt(t.year, 10);
+    return !isNaN(y) && y >= start && y <= end;
+  });
+}
+
+export async function fetchTracks(decade: Decade = 'all'): Promise<Track[]> {
   const artistPromises = ITUNES_ARABIC_ARTISTS.map(searchArtist);
   const artistResults = await Promise.all(artistPromises);
   const allTracks = artistResults.flat();
   const unique = allTracks.filter(
     (track, idx, self) => self.findIndex((t) => t.id === track.id) === idx
   );
-  return shuffle(unique);
+  return shuffle(filterByDecade(unique, decade));
 }

@@ -5,6 +5,7 @@ import { HomeScreen } from './src/screens/HomeScreen';
 import { GameScreen } from './src/screens/GameScreen';
 import { theme } from './src/theme';
 import { Language, t } from './src/i18n';
+import { Decade } from './src/constants';
 
 type Screen = 'home' | 'game';
 
@@ -22,11 +23,11 @@ export const useT = () => {
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>('home');
-  const [loading, setLoading] = useState(false);
   const [lang, setLang] = useState<Language>('en');
+  const [decade, setDecade] = useState<Decade>('all');
 
-  const handleStart = useCallback(async () => {
-    setLoading(true);
+  const handleStart = useCallback((d: Decade) => {
+    setDecade(d);
     setScreen('game');
   }, []);
 
@@ -35,10 +36,10 @@ export default function App() {
       <View style={styles.container}>
         <StatusBar style="light" />
         {screen === 'home' && (
-          <HomeScreen onStart={handleStart} loading={loading} />
+          <HomeScreen onStart={handleStart} />
         )}
         {screen === 'game' && (
-          <GameScreen />
+          <GameScreen decade={decade} />
         )}
       </View>
     </LangContext.Provider>

@@ -1,6 +1,6 @@
 export const APP_NAME = 'Nagham';
 
-export const PREVIEW_DURATION_MS = 12000;
+export type Decade = '70s' | '80s' | '90s' | 'all';
 
 export const ITUNES_ARABIC_ARTISTS = [
   // Egypt

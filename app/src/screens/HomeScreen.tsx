@@ -1,15 +1,21 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { theme } from '../theme';
-import { APP_NAME } from '../constants';
+import { APP_NAME, Decade } from '../constants';
 import { useT, useLang } from '../../App';
 
 interface HomeScreenProps {
-  onStart: () => void;
-  loading: boolean;
+  onStart: (decade: Decade) => void;
 }
 
-export function HomeScreen({ onStart, loading }: HomeScreenProps) {
+const DECADES: { key: Decade; labelEn: string; labelAr: string }[] = [
+  { key: '70s', labelEn: '70s', labelAr: 'السبعينات' },
+  { key: '80s', labelEn: '80s', labelAr: 'الثمانينات' },
+  { key: '90s', labelEn: '90s', labelAr: 'التسعينات' },
+  { key: 'all', labelEn: 'All Eras', labelAr: 'كل العصور' },
+];
+
+export function HomeScreen({ onStart }: HomeScreenProps) {
   const __ = useT();
   const { lang, setLang } = useLang();
 
@@ -27,22 +33,26 @@ export function HomeScreen({ onStart, loading }: HomeScreenProps) {
         </View>
         <Text style={styles.title}>{APP_NAME}</Text>
         <Text style={styles.subtitle}>
-          {__('subtitle')}{'\n'}{__('subtitleDetail')}
+          {__('subtitleDetail')}
         </Text>
       </View>
 
-      <TouchableOpacity
-        style={[styles.startButton, loading && styles.startButtonDisabled]}
-        onPress={onStart}
-        disabled={loading}
-        activeOpacity={0.7}
-      >
-        {loading ? (
-          <ActivityIndicator color={theme.colors.background} size="small" />
-        ) : (
-          <Text style={styles.startButtonText}>{__('startGame')}</Text>
-        )}
-      </TouchableOpacity>
+      <Text style={styles.pickLabel}>{__('pickDecade')}</Text>
+
+      <View style={styles.decadeGrid}>
+        {DECADES.map((d) => (
+          <TouchableOpacity
+            key={d.key}
+            style={[styles.decadeButton, d.key === 'all' && styles.decadeButtonAll]}
+            onPress={() => onStart(d.key)}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.decadeButtonText}>
+              {lang === 'ar' ? d.labelAr : d.labelEn}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
 
       <Text style={styles.footer}>
         {__('poweredBy')}
@@ -75,7 +85,7 @@ const styles = StyleSheet.create({
   },
   hero: {
     alignItems: 'center',
-    marginBottom: theme.spacing.xxl * 2,
+    marginBottom: theme.spacing.xl,
   },
   logoContainer: {
     width: 100,
@@ -106,24 +116,36 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 24,
   },
-  startButton: {
-    backgroundColor: theme.colors.primary,
-    paddingHorizontal: theme.spacing.xxl,
+  pickLabel: {
+    color: theme.colors.textSecondary,
+    fontSize: theme.fontSize.md,
+    fontWeight: '600',
+    marginBottom: theme.spacing.md,
+  },
+  decadeGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: theme.spacing.md,
+    marginBottom: theme.spacing.xxl,
+  },
+  decadeButton: {
+    backgroundColor: theme.colors.card,
     paddingVertical: theme.spacing.md,
-    borderRadius: theme.borderRadius.full,
-    elevation: 4,
-    shadowColor: theme.colors.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-    minWidth: 200,
+    paddingHorizontal: theme.spacing.lg,
+    borderRadius: theme.borderRadius.md,
+    borderWidth: 1,
+    borderColor: theme.colors.primary,
+    minWidth: 120,
     alignItems: 'center',
   },
-  startButtonDisabled: {
-    opacity: 0.6,
+  decadeButtonAll: {
+    minWidth: '80%',
+    backgroundColor: theme.colors.primary,
+    borderColor: theme.colors.primaryDark,
   },
-  startButtonText: {
-    color: theme.colors.background,
+  decadeButtonText: {
+    color: theme.colors.text,
     fontSize: theme.fontSize.lg,
     fontWeight: '700',
   },

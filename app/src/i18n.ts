@@ -2,9 +2,8 @@ export type Language = 'en' | 'ar';
 
 const translations: Record<Language, Record<string, string>> = {
   en: {
-    subtitle: 'Arabic Music Trivia',
     subtitleDetail: 'Listen to a preview, guess the song.',
-    startGame: 'Start Game',
+    pickDecade: 'Choose a decade:',
     poweredBy: 'Powered by iTunes',
     loadingSongs: 'Loading songs...',
     noSongs: 'No songs available.',
@@ -19,9 +18,8 @@ const translations: Record<Language, Record<string, string>> = {
     langLabel: 'العربية',
   },
   ar: {
-    subtitle: 'تخمين الأغاني العربية',
     subtitleDetail: 'استمع للمقطع، وخمن الأغنية.',
-    startGame: 'ابدأ اللعبة',
+    pickDecade: 'اختر حقبة:',
     poweredBy: 'مشغل بواسطة iTunes',
     loadingSongs: 'جار تحميل الأغاني...',
     noSongs: 'لا توجد أغاني متاحة.',
