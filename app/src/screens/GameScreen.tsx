@@ -11,8 +11,10 @@ import { SongReveal } from '../components/SongReveal';
 import { theme } from '../theme';
 import { useAudioPlayer } from '../hooks/useAudioPlayer';
 import { useGameData } from '../hooks/useGameData';
+import { useT } from '../../App';
 
 export function GameScreen() {
+  const __ = useT();
   const { player, status, playTrack, stopPlayback } = useAudioPlayer();
   const {
     phase,
@@ -49,7 +51,7 @@ export function GameScreen() {
     return (
       <View style={styles.container}>
         <TouchableOpacity style={styles.startButton} onPress={startGame} activeOpacity={0.7}>
-          <Text style={styles.startButtonText}>Start Game</Text>
+          <Text style={styles.startButtonText}>{__('restart')}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -59,7 +61,7 @@ export function GameScreen() {
     return (
       <View style={styles.container}>
         <ActivityIndicator size="large" color={theme.colors.primary} />
-        <Text style={styles.loadingText}>Loading songs...</Text>
+        <Text style={styles.loadingText}>{__('loadingSongs')}</Text>
       </View>
     );
   }
@@ -69,7 +71,7 @@ export function GameScreen() {
       <View style={styles.container}>
         <Text style={styles.errorText}>{error}</Text>
         <TouchableOpacity style={styles.retryButton} onPress={startGame} activeOpacity={0.7}>
-          <Text style={styles.retryButtonText}>Retry</Text>
+          <Text style={styles.retryButtonText}>{__('retry')}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -78,7 +80,7 @@ export function GameScreen() {
   if (!currentTrack) {
     return (
       <View style={styles.container}>
-        <Text style={styles.emptyText}>No songs available.</Text>
+        <Text style={styles.emptyText}>{__('noSongs')}</Text>
       </View>
     );
   }
@@ -95,7 +97,7 @@ export function GameScreen() {
         {phase === 'playing' && (
           <>
             <View style={styles.guessArea}>
-              <Text style={styles.guessLabel}>What song is this?</Text>
+              <Text style={styles.guessLabel}>{__('whatSong')}</Text>
               <View style={styles.mysteryDisc}>
                 <Text style={styles.mysteryIcon}>🎶</Text>
               </View>
@@ -117,7 +119,7 @@ export function GameScreen() {
             ) : (
               <View style={styles.demoNotice}>
                 <Text style={styles.demoNoticeText}>
-                  Loading preview...
+                  {__('loadingPreview')}
                 </Text>
               </View>
             )}
@@ -127,7 +129,7 @@ export function GameScreen() {
               onPress={handleReveal}
               activeOpacity={0.7}
             >
-              <Text style={styles.revealButtonText}>Reveal Answer</Text>
+              <Text style={styles.revealButtonText}>{__('revealAnswer')}</Text>
             </TouchableOpacity>
           </>
         )}
@@ -141,7 +143,7 @@ export function GameScreen() {
               onPress={handleNextSong}
               activeOpacity={0.7}
             >
-              <Text style={styles.nextButtonText}>Next Song</Text>
+              <Text style={styles.nextButtonText}>{__('nextSong')}</Text>
             </TouchableOpacity>
           </>
         )}

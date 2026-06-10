@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { theme } from '../theme';
 import { APP_NAME } from '../constants';
+import { useT, useLang } from '../../App';
 
 interface HomeScreenProps {
   onStart: () => void;
@@ -9,15 +10,24 @@ interface HomeScreenProps {
 }
 
 export function HomeScreen({ onStart, loading }: HomeScreenProps) {
+  const __ = useT();
+  const { lang, setLang } = useLang();
+
+  const toggleLang = () => setLang(lang === 'en' ? 'ar' : 'en');
+
   return (
     <View style={styles.container}>
+      <TouchableOpacity style={styles.langToggle} onPress={toggleLang} activeOpacity={0.7}>
+        <Text style={styles.langToggleText}>{__('langLabel')}</Text>
+      </TouchableOpacity>
+
       <View style={styles.hero}>
         <View style={styles.logoContainer}>
           <Text style={styles.logo}>🎵</Text>
         </View>
         <Text style={styles.title}>{APP_NAME}</Text>
         <Text style={styles.subtitle}>
-          Arabic Music Trivia{'\n'}Listen to a preview, guess the song.
+          {__('subtitle')}{'\n'}{__('subtitleDetail')}
         </Text>
       </View>
 
@@ -30,12 +40,12 @@ export function HomeScreen({ onStart, loading }: HomeScreenProps) {
         {loading ? (
           <ActivityIndicator color={theme.colors.background} size="small" />
         ) : (
-          <Text style={styles.startButtonText}>Start Game</Text>
+          <Text style={styles.startButtonText}>{__('startGame')}</Text>
         )}
       </TouchableOpacity>
 
       <Text style={styles.footer}>
-        Powered by iTunes
+        {__('poweredBy')}
       </Text>
     </View>
   );
@@ -48,6 +58,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: theme.spacing.xl,
+  },
+  langToggle: {
+    position: 'absolute',
+    top: theme.spacing.xxl,
+    right: theme.spacing.lg,
+    backgroundColor: theme.colors.surface,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.xs,
+    borderRadius: theme.borderRadius.sm,
+  },
+  langToggleText: {
+    color: theme.colors.primary,
+    fontSize: theme.fontSize.sm,
+    fontWeight: '600',
   },
   hero: {
     alignItems: 'center',

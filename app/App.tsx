@@ -1,15 +1,29 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, createContext, useContext } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { View, StyleSheet } from 'react-native';
 import { HomeScreen } from './src/screens/HomeScreen';
 import { GameScreen } from './src/screens/GameScreen';
 import { theme } from './src/theme';
+import { Language, t } from './src/i18n';
 
 type Screen = 'home' | 'game';
+
+interface LangCtx {
+  lang: Language;
+  setLang: (l: Language) => void;
+}
+
+export const LangContext = createContext<LangCtx>({ lang: 'en', setLang: () => {} });
+export const useLang = () => useContext(LangContext);
+export const useT = () => {
+  const { lang } = useLang();
+  return (key: string) => t(lang, key);
+};
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>('home');
   const [loading, setLoading] = useState(false);
+  const [lang, setLang] = useState<Language>('en');
 
   const handleStart = useCallback(async () => {
     setLoading(true);
@@ -17,15 +31,17 @@ export default function App() {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <StatusBar style="light" />
-      {screen === 'home' && (
-        <HomeScreen onStart={handleStart} loading={loading} />
-      )}
-      {screen === 'game' && (
-        <GameScreen />
-      )}
-    </View>
+    <LangContext.Provider value={{ lang, setLang }}>
+      <View style={styles.container}>
+        <StatusBar style="light" />
+        {screen === 'home' && (
+          <HomeScreen onStart={handleStart} loading={loading} />
+        )}
+        {screen === 'game' && (
+          <GameScreen />
+        )}
+      </View>
+    </LangContext.Provider>
   );
 }
 

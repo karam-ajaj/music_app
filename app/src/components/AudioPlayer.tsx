@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { theme } from '../theme';
+import { useT } from '../../App';
 
 interface AudioPlayerProps {
   playing: boolean;
@@ -17,6 +18,7 @@ function formatTime(seconds: number): string {
 }
 
 export function AudioPlayer({ playing, currentTime, duration, onPlayPause }: AudioPlayerProps) {
+  const __ = useT();
   const progress = duration > 0 ? currentTime / duration : 0;
 
   return (
@@ -40,7 +42,7 @@ export function AudioPlayer({ playing, currentTime, duration, onPlayPause }: Aud
       </TouchableOpacity>
 
       <Text style={styles.statusText}>
-        {playing ? 'Playing preview...' : 'Paused'}
+        {playing ? __('playingPreview') : __('paused')}
       </Text>
     </View>
   );
