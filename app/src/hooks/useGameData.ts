@@ -1,7 +1,6 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback } from 'react';
 import { Track, GamePhase } from '../types';
 import { fetchTracks } from '../services/tracks';
-import { PREVIEW_DURATION_MS } from '../constants';
 
 export function useGameData() {
   const [phase, setPhase] = useState<GamePhase>('playing');
@@ -11,15 +10,13 @@ export function useGameData() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const hasStarted = useRef(false);
-
   const startGame = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const tracks = await fetchTracks();
       if (tracks.length === 0) {
-        setError('No songs found. Add tracks to data/tracks.json.');
+        setError('No songs found.');
         return;
       }
       setQueue(tracks);
@@ -58,23 +55,6 @@ export function useGameData() {
     setPhase('playing');
     pickNext();
   }, [currentTrack, pickNext]);
-
-  const isAutoRevealed = useRef(false);
-
-  useEffect(() => {
-    if (phase !== 'playing') {
-      isAutoRevealed.current = false;
-      return;
-    }
-
-    isAutoRevealed.current = false;
-    const timer = setTimeout(() => {
-      isAutoRevealed.current = true;
-      reveal();
-    }, PREVIEW_DURATION_MS);
-
-    return () => clearTimeout(timer);
-  }, [phase, currentTrack, reveal]);
 
   return {
     phase,
