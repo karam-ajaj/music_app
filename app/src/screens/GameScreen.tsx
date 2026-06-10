@@ -21,7 +21,7 @@ interface GameScreenProps {
 
 export function GameScreen({ decade, region }: GameScreenProps) {
   const __ = useT();
-  const { player, status, playTrack, stopPlayback } = useAudioPlayer();
+  const { player, status, playTrack } = useAudioPlayer();
   const {
     phase,
     currentTrack,

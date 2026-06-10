@@ -42,21 +42,28 @@ const DECADE_RANGE: Record<Decade, [number, number]> = {
 };
 
 async function searchArtist(artist: string): Promise<Track[]> {
-  const query = encodeURIComponent(artist);
-  const url = `https://itunes.apple.com/search?term=${query}&country=eg&entity=song&limit=30`;
-  const res = await fetch(url);
-  const json = await res.json();
-  const results = (json.results || []) as iTunesResult[];
-  return results
-    .filter((r) => r.previewUrl && r.trackName && r.artistName)
-    .map(toTrack);
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 8000);
+    const query = encodeURIComponent(artist);
+    const url = `https://itunes.apple.com/search?term=${query}&country=eg&entity=song&limit=30`;
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(timer);
+    const json = await res.json();
+    const results = (json.results || []) as iTunesResult[];
+    return results
+      .filter((r) => r.previewUrl && r.trackName && r.artistName)
+      .map(toTrack);
+  } catch {
+    return [];
+  }
 }
 
 async function searchBatched(artists: string[], batchSize: number): Promise<Track[]> {
   const allTracks: Track[] = [];
   for (let i = 0; i < artists.length; i += batchSize) {
     const batch = artists.slice(i, i + batchSize);
-    const results = await Promise.all(batch.map(searchArtist));
+    const results = await Promise.all(batch.map((a) => searchArtist(a).catch(() => [])));
     allTracks.push(...results.flat());
   }
   return allTracks;
@@ -78,7 +85,7 @@ function artistsForRegion(region: Region): string[] {
 
 export async function fetchTracks(decade: Decade = 'all', region: Region = 'all'): Promise<Track[]> {
   const artists = artistsForRegion(region);
-  const allTracks = await searchBatched(artists, 5);
+  const allTracks = await searchBatched(artists, 3);
   const unique = allTracks.filter(
     (track, idx, self) => self.findIndex((t) => t.id === track.id) === idx
   );
