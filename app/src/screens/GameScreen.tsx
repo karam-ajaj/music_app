@@ -19,13 +19,12 @@ interface GameScreenProps {
   regions: RegionKey[];
   players: string[];
   scores: number[];
-  currentPlayer: number;
   onBack: () => void;
-  onCorrect: () => void;
-  onSkip: () => void;
+  onScore: (playerIdx: number) => void;
+  onNoScore: () => void;
 }
 
-export function GameScreen({ decades, regions, players, scores, currentPlayer, onBack, onCorrect, onSkip }: GameScreenProps) {
+export function GameScreen({ decades, regions, players, scores, onBack, onScore, onNoScore }: GameScreenProps) {
   const __ = useT();
   const { player, status, playTrack } = useAudioPlayer();
   const {
@@ -45,6 +44,7 @@ export function GameScreen({ decades, regions, players, scores, currentPlayer, o
   const totalSongs = playedIds.length + queue.length + (currentTrack ? 1 : 0);
   const playedCount = playedIds.length + 1;
   const hasAudio = !!currentTrack?.previewUrl;
+  const [showHelp, setShowHelp] = React.useState(false);
 
   const finished =
     hasAudio &&
@@ -117,19 +117,16 @@ export function GameScreen({ decades, regions, players, scores, currentPlayer, o
           <Text style={styles.backBtnText}>⌂</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity onPress={() => setShowHelp(!showHelp)} style={styles.helpBtn}>
+          <Text style={styles.helpBtnText}>?</Text>
+        </TouchableOpacity>
+
         {players.length > 1 && (
           <View style={styles.scoreRow}>
             {players.map((p, i) => (
-              <View
-                key={i}
-                style={[styles.scoreBadge, i === currentPlayer && styles.scoreBadgeActive]}
-              >
-                <Text style={[styles.scoreName, i === currentPlayer && styles.scoreNameActive]}>
-                  {p}
-                </Text>
-                <Text style={[styles.scorePts, i === currentPlayer && styles.scorePtsActive]}>
-                  {scores[i] || 0}
-                </Text>
+              <View key={i} style={styles.scoreBadge}>
+                <Text style={styles.scoreName}>{p}</Text>
+                <Text style={styles.scorePts}>{scores[i] || 0}</Text>
               </View>
             ))}
           </View>
@@ -149,11 +146,7 @@ export function GameScreen({ decades, regions, players, scores, currentPlayer, o
         {phase === 'playing' && (
           <>
             <View style={styles.guessArea}>
-              <Text style={styles.guessLabel}>
-                {players.length > 1
-                  ? `${players[currentPlayer]}، ${__('yourTurn')}`
-                  : __('listenGuess')}
-              </Text>
+              <Text style={styles.guessLabel}>{__('listenGuess')}</Text>
               <Text style={styles.guessSubLabel}>{__('guessArtist')}</Text>
               <View style={styles.mysteryDisc}>
                 <Text style={styles.mysteryIcon}>🎶</Text>
@@ -197,23 +190,49 @@ export function GameScreen({ decades, regions, players, scores, currentPlayer, o
           <>
             <SongReveal track={currentTrack} />
 
-            <View style={styles.resultRow}>
+            {players.length > 1 ? (
+              <View style={styles.scoreBoard}>
+                <Text style={styles.scoreWho}>{__('whoGotIt')}</Text>
+                {players.map((p, i) => (
+                  <TouchableOpacity
+                    key={i}
+                    style={styles.playerScoreBtn}
+                    onPress={() => { onScore(i); nextSong(); }}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={styles.playerScoreBtnText}>✓ {p}</Text>
+                  </TouchableOpacity>
+                ))}
+                <TouchableOpacity
+                  style={styles.noOneBtn}
+                  onPress={() => { onNoScore(); nextSong(); }}
+                  activeOpacity={0.7}
+                >
+                  <Text style={styles.noOneBtnText}>{__('noOneKnew')}</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
               <TouchableOpacity
-                style={styles.correctBtn}
-                onPress={() => { onCorrect(); nextSong(); }}
+                style={styles.soloNextBtn}
+                onPress={handleNextSong}
                 activeOpacity={0.7}
               >
-                <Text style={styles.correctBtnText}>✓ {__('correct')}</Text>
+                <Text style={styles.soloNextBtnText}>{__('nextSong')}</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.skipBtn}
-                onPress={() => { onSkip(); nextSong(); }}
-                activeOpacity={0.7}
-              >
-                <Text style={styles.skipBtnText}>→ {__('skip')}</Text>
+            )}
+          </>
+        )}
+
+        {showHelp && (
+          <View style={styles.helpOverlay}>
+            <View style={styles.helpCard}>
+              <Text style={styles.helpTitle}>{__('howToPlay')}</Text>
+              <Text style={styles.helpText}>{__('helpText')}</Text>
+              <TouchableOpacity onPress={() => setShowHelp(false)} style={styles.helpCloseBtn}>
+                <Text style={styles.helpCloseText}>{__('gotIt')}</Text>
               </TouchableOpacity>
             </View>
-          </>
+          </View>
         )}
       </View>
     </View>
@@ -274,24 +293,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     minWidth: 50,
   },
-  scoreBadgeActive: {
-    backgroundColor: theme.colors.primary,
-  },
   scoreName: {
     color: theme.colors.textSecondary,
     fontSize: theme.fontSize.xs,
-  },
-  scoreNameActive: {
-    color: theme.colors.background,
-    fontWeight: '700',
   },
   scorePts: {
     color: theme.colors.primary,
     fontSize: theme.fontSize.md,
     fontWeight: '700',
-  },
-  scorePtsActive: {
-    color: theme.colors.background,
   },
   content: {
     width: '100%',
@@ -352,38 +361,109 @@ const styles = StyleSheet.create({
     fontSize: theme.fontSize.lg,
     fontWeight: '700',
   },
-  resultRow: {
-    flexDirection: 'row',
-    gap: theme.spacing.md,
+  scoreBoard: {
     marginTop: theme.spacing.xl,
+    width: '100%',
+    alignItems: 'center',
   },
-  correctBtn: {
+  scoreWho: {
+    color: theme.colors.textSecondary,
+    fontSize: theme.fontSize.sm,
+    marginBottom: theme.spacing.md,
+  },
+  playerScoreBtn: {
     backgroundColor: theme.colors.success,
-    paddingVertical: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
     paddingHorizontal: theme.spacing.xl,
     borderRadius: theme.borderRadius.full,
     alignItems: 'center',
-    flex: 1,
+    marginBottom: theme.spacing.sm,
+    width: '100%',
   },
-  correctBtnText: {
+  playerScoreBtnText: {
     color: '#fff',
+    fontSize: theme.fontSize.md,
+    fontWeight: '700',
+  },
+  noOneBtn: {
+    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.xl,
+    borderRadius: theme.borderRadius.full,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: theme.colors.textMuted,
+    width: '100%',
+  },
+  noOneBtnText: {
+    color: theme.colors.textMuted,
+    fontSize: theme.fontSize.md,
+  },
+  soloNextBtn: {
+    backgroundColor: theme.colors.primary,
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.xxl,
+    borderRadius: theme.borderRadius.full,
+    marginTop: theme.spacing.xl,
+  },
+  soloNextBtnText: {
+    color: theme.colors.background,
     fontSize: theme.fontSize.lg,
     fontWeight: '700',
   },
-  skipBtn: {
+  helpBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     backgroundColor: theme.colors.card,
-    paddingVertical: theme.spacing.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: theme.colors.primary,
+  },
+  helpBtnText: {
+    color: theme.colors.primary,
+    fontSize: theme.fontSize.md,
+    fontWeight: '700',
+  },
+  helpOverlay: {
+    position: 'absolute',
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
     paddingHorizontal: theme.spacing.xl,
+  },
+  helpCard: {
+    backgroundColor: theme.colors.card,
+    borderRadius: theme.borderRadius.lg,
+    padding: theme.spacing.xl,
+    width: '100%',
+    maxHeight: '80%',
+  },
+  helpTitle: {
+    color: theme.colors.primary,
+    fontSize: theme.fontSize.xl,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginBottom: theme.spacing.lg,
+  },
+  helpText: {
+    color: theme.colors.textSecondary,
+    fontSize: theme.fontSize.md,
+    lineHeight: 22,
+    textAlign: 'center',
+    marginBottom: theme.spacing.lg,
+  },
+  helpCloseBtn: {
+    backgroundColor: theme.colors.primary,
+    paddingVertical: theme.spacing.sm,
     borderRadius: theme.borderRadius.full,
     alignItems: 'center',
-    flex: 1,
-    borderWidth: 1,
-    borderColor: theme.colors.textMuted,
   },
-  skipBtnText: {
-    color: theme.colors.textMuted,
-    fontSize: theme.fontSize.lg,
-    fontWeight: '600',
+  helpCloseText: {
+    color: theme.colors.background,
+    fontSize: theme.fontSize.md,
+    fontWeight: '700',
   },
   loadingText: {
     color: theme.colors.textSecondary,

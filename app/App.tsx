@@ -28,14 +28,12 @@ export default function App() {
   const [regions, setRegions] = useState<RegionKey[]>([]);
   const [players, setPlayers] = useState<string[]>(['']);
   const [scores, setScores] = useState<number[]>([0]);
-  const [currentPlayer, setCurrentPlayer] = useState(0);
 
   const handleStart = useCallback((d: DecadeKey[], r: RegionKey[], p: string[]) => {
     setDecades(d);
     setRegions(r);
     setPlayers(p);
     setScores(p.map(() => 0));
-    setCurrentPlayer(0);
     setScreen('game');
   }, []);
 
@@ -43,18 +41,15 @@ export default function App() {
     setScreen('home');
   }, []);
 
-  const handleCorrect = useCallback(() => {
+  const handleScore = useCallback((playerIdx: number) => {
     setScores((prev) => {
       const next = [...prev];
-      next[currentPlayer] = (next[currentPlayer] || 0) + 1;
+      next[playerIdx] = (next[playerIdx] || 0) + 1;
       return next;
     });
-    setCurrentPlayer((prev) => (prev + 1) % players.length);
-  }, [currentPlayer, players.length]);
+  }, []);
 
-  const handleSkip = useCallback(() => {
-    setCurrentPlayer((prev) => (prev + 1) % players.length);
-  }, [players.length]);
+  const handleNoScore = useCallback(() => {}, []);
 
   return (
     <LangContext.Provider value={{ lang, setLang }}>
@@ -69,10 +64,9 @@ export default function App() {
             regions={regions}
             players={players}
             scores={scores}
-            currentPlayer={currentPlayer}
             onBack={handleBack}
-            onCorrect={handleCorrect}
-            onSkip={handleSkip}
+            onScore={handleScore}
+            onNoScore={handleNoScore}
           />
         )}
       </View>
