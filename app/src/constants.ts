@@ -1,6 +1,8 @@
+import versionData from './version.json';
+
 export const APP_NAME = 'اسمع';
 
-export const APP_VERSION = '0.1';
+export const APP_VERSION = versionData.version;
 
 export type DecadeKey = '70s' | '80s' | '90s';
 export type RegionKey = 'egypt' | 'levant' | 'gulf' | 'iraq' | 'maghreb';
