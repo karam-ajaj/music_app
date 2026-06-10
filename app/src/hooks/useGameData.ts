@@ -19,7 +19,7 @@ export function useGameData() {
     try {
       const tracks = await fetchTracks();
       if (tracks.length === 0) {
-        setError('No tracks with previews found. Run the extraction script with your Spotify credentials.');
+        setError('No songs found. Add tracks to data/tracks.json.');
         return;
       }
       setQueue(tracks);

@@ -28,6 +28,7 @@ export function GameScreen() {
 
   const totalSongs = playedIds.length + queue.length + (currentTrack ? 1 : 0);
   const playedCount = playedIds.length + 1;
+  const hasAudio = !!currentTrack?.previewUrl;
 
   React.useEffect(() => {
     if (currentTrack && phase === 'playing') {
@@ -47,7 +48,9 @@ export function GameScreen() {
   if (!currentTrack && !loading && !error) {
     return (
       <View style={styles.container}>
-        <Text style={styles.emptyText}>Press start to begin the game!</Text>
+        <TouchableOpacity style={styles.startButton} onPress={startGame} activeOpacity={0.7}>
+          <Text style={styles.startButtonText}>Start Game</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -98,18 +101,26 @@ export function GameScreen() {
               </View>
             </View>
 
-            <AudioPlayer
-              playing={status.playing}
-              currentTime={status.currentTime}
-              duration={status.duration}
-              onPlayPause={() => {
-                if (status.playing) {
-                  player.pause();
-                } else {
-                  player.play();
-                }
-              }}
-            />
+            {hasAudio ? (
+              <AudioPlayer
+                playing={status.playing}
+                currentTime={status.currentTime}
+                duration={status.duration}
+                onPlayPause={() => {
+                  if (status.playing) {
+                    player.pause();
+                  } else {
+                    player.play();
+                  }
+                }}
+              />
+            ) : (
+              <View style={styles.demoNotice}>
+                <Text style={styles.demoNoticeText}>
+                  Demo Mode{'\n'}Run extraction script for audio
+                </Text>
+              </View>
+            )}
 
             <TouchableOpacity
               style={styles.revealButton}
@@ -144,11 +155,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background,
     paddingHorizontal: theme.spacing.lg,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   header: {
-    paddingTop: theme.spacing.xxl,
-    paddingBottom: theme.spacing.md,
-    alignItems: 'flex-end',
+    position: 'absolute',
+    top: theme.spacing.xxl,
+    right: theme.spacing.lg,
   },
   counter: {
     color: theme.colors.textMuted,
@@ -156,8 +169,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   content: {
-    flex: 1,
-    justifyContent: 'center',
+    width: '100%',
+    alignItems: 'center',
   },
   guessArea: {
     alignItems: 'center',
@@ -182,9 +195,20 @@ const styles = StyleSheet.create({
   mysteryIcon: {
     fontSize: 48,
   },
+  demoNotice: {
+    alignItems: 'center',
+    paddingVertical: theme.spacing.lg,
+  },
+  demoNoticeText: {
+    color: theme.colors.textMuted,
+    fontSize: theme.fontSize.sm,
+    textAlign: 'center',
+    lineHeight: 20,
+  },
   revealButton: {
     backgroundColor: theme.colors.card,
     paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.xxl,
     borderRadius: theme.borderRadius.full,
     alignItems: 'center',
     marginTop: theme.spacing.xl,
@@ -199,9 +223,11 @@ const styles = StyleSheet.create({
   nextButton: {
     backgroundColor: theme.colors.primary,
     paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.xxl,
     borderRadius: theme.borderRadius.full,
     alignItems: 'center',
     marginTop: theme.spacing.xl,
+    width: '100%',
   },
   nextButtonText: {
     color: theme.colors.background,
@@ -234,5 +260,16 @@ const styles = StyleSheet.create({
     color: theme.colors.background,
     fontSize: theme.fontSize.md,
     fontWeight: '600',
+  },
+  startButton: {
+    backgroundColor: theme.colors.primary,
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.xxl,
+    borderRadius: theme.borderRadius.full,
+  },
+  startButtonText: {
+    color: theme.colors.background,
+    fontSize: theme.fontSize.lg,
+    fontWeight: '700',
   },
 });

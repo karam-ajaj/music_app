@@ -14,7 +14,7 @@ function shuffle<T>(array: T[]): T[] {
 export async function fetchTracks(): Promise<Track[]> {
   switch (DATA_SOURCE) {
     case 'local':
-      return shuffle((tracksData as Track[]).filter((t) => t.previewUrl));
+      return shuffle(tracksData as Track[]);
     case 'api': {
       const res = await fetch(`${API_BASE_URL}/api/tracks`);
       const json = await res.json();

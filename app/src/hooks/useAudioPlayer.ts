@@ -6,6 +6,7 @@ export function useAudioPlayer() {
   const status = useAudioPlayerStatus(player);
 
   const playTrack = (track: Track) => {
+    if (!track.previewUrl) return;
     player.replace(track.previewUrl);
     player.play();
   };

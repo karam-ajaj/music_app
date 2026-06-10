@@ -1,6 +1,6 @@
 [
   {
-    "id": "sample-1",
+    "id": "demo-1",
     "name": "Nour El Ein",
     "artists": ["Amr Diab"],
     "album": "Nour El Ein",
@@ -11,7 +11,7 @@
     "spotifyUrl": "https://open.spotify.com/track/6cSgA9QlFZxZFElIDKAzAC"
   },
   {
-    "id": "sample-2",
+    "id": "demo-2",
     "name": "Tamally Maak",
     "artists": ["Amr Diab"],
     "album": "Tamally Maak",
@@ -22,7 +22,7 @@
     "spotifyUrl": "https://open.spotify.com/track/5uFTEaxBzsfjGfAybM2TE6"
   },
   {
-    "id": "sample-3",
+    "id": "demo-3",
     "name": "Habibi Ya Nour El Ain",
     "artists": ["Amr Diab"],
     "album": "Nour El Ein",
@@ -33,7 +33,7 @@
     "spotifyUrl": "https://open.spotify.com/track/0UpoJMJDMJwFWKuTsNPuZb"
   },
   {
-    "id": "sample-4",
+    "id": "demo-4",
     "name": "Kifak Inta",
     "artists": ["Fairuz"],
     "album": "Kifak Inta",
@@ -44,7 +44,7 @@
     "spotifyUrl": "https://open.spotify.com/track/5Bvtt1DUVBDFShMGdJEUYC"
   },
   {
-    "id": "sample-5",
+    "id": "demo-5",
     "name": "Aatini Al Nay",
     "artists": ["Fairuz"],
     "album": "Fairuz In Concert",
@@ -53,5 +53,60 @@
     "durationMs": 30000,
     "previewUrl": "",
     "spotifyUrl": "https://open.spotify.com/track/0JXOoYfNq0RxVXoJAHPLpB"
+  },
+  {
+    "id": "demo-6",
+    "name": "Alf Leila Wa Leila",
+    "artists": ["Umm Kulthum"],
+    "album": "Alf Leila Wa Leila",
+    "albumArt": "",
+    "year": "1969",
+    "durationMs": 30000,
+    "previewUrl": "",
+    "spotifyUrl": "https://open.spotify.com/track/5HhETNqEoDn5jQoGKnWGaS"
+  },
+  {
+    "id": "demo-7",
+    "name": "Enta Omri",
+    "artists": ["Umm Kulthum"],
+    "album": "Enta Omri",
+    "albumArt": "",
+    "year": "1964",
+    "durationMs": 30000,
+    "previewUrl": "",
+    "spotifyUrl": "https://open.spotify.com/track/2zGAhvGdBMX2oRoPuOdeRq"
+  },
+  {
+    "id": "demo-8",
+    "name": "Qareat Al Fingan",
+    "artists": ["Abdel Halim Hafez"],
+    "album": "Qareat Al Fingan",
+    "albumArt": "",
+    "year": "1968",
+    "durationMs": 30000,
+    "previewUrl": "",
+    "spotifyUrl": "https://open.spotify.com/track/4ZJZpGjL4Jj1zYQxBdOCE4"
+  },
+  {
+    "id": "demo-9",
+    "name": "Zay El Hawa",
+    "artists": ["Abdel Halim Hafez"],
+    "album": "Zay El Hawa",
+    "albumArt": "",
+    "year": "1969",
+    "durationMs": 30000,
+    "previewUrl": "",
+    "spotifyUrl": "https://open.spotify.com/track/6rrJNpAq3r5Iz5HKkSNLAd"
+  },
+  {
+    "id": "demo-10",
+    "name": "El Leila",
+    "artists": ["Amr Diab"],
+    "album": "El Leila",
+    "albumArt": "",
+    "year": "2013",
+    "durationMs": 30000,
+    "previewUrl": "",
+    "spotifyUrl": "https://open.spotify.com/track/4a7GkknZuq7lHACRJGWGMa"
   }
 ]

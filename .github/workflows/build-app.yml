@@ -37,20 +37,32 @@ jobs:
         with:
           packages: 'platforms;android-34 build-tools;34.0.0'
 
+      - name: Generate keystore
+        run: |
+          keytool -genkey -v -keystore app/release.keystore -alias arabichitster \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass android -keypass android \
+            -dname "CN=Arabic Hitster, OU=Dev, O=ArabicHitster, L=Unknown, S=Unknown, C=US"
+
       - name: Generate native Android project
         run: npx expo prebuild --platform android --clean
 
-      - name: Build APK
-        run: cd android && ./gradlew assembleDebug
+      - name: Build release APK
+        run: cd android && ./gradlew assembleRelease
+        env:
+          ORG_GRADLE_PROJECT_android.injected.signing.store.file: ../release.keystore
+          ORG_GRADLE_PROJECT_android.injected.signing.store.password: android
+          ORG_GRADLE_PROJECT_android.injected.signing.key.alias: arabichitster
+          ORG_GRADLE_PROJECT_android.injected.signing.key.password: android
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: arabic-hitster
-          path: app/android/app/build/outputs/apk/debug/app-debug.apk
+          path: app/android/app/build/outputs/apk/release/app-release.apk
 
       - name: Upload to Release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          files: app/android/app/build/outputs/apk/debug/app-debug.apk
+          files: app/android/app/build/outputs/apk/release/app-release.apk
