@@ -1,0 +1,57 @@
+[
+  {
+    "id": "sample-1",
+    "name": "Nour El Ein",
+    "artists": ["Amr Diab"],
+    "album": "Nour El Ein",
+    "albumArt": "",
+    "year": "1996",
+    "durationMs": 30000,
+    "previewUrl": "",
+    "spotifyUrl": "https://open.spotify.com/track/6cSgA9QlFZxZFElIDKAzAC"
+  },
+  {
+    "id": "sample-2",
+    "name": "Tamally Maak",
+    "artists": ["Amr Diab"],
+    "album": "Tamally Maak",
+    "albumArt": "",
+    "year": "2000",
+    "durationMs": 30000,
+    "previewUrl": "",
+    "spotifyUrl": "https://open.spotify.com/track/5uFTEaxBzsfjGfAybM2TE6"
+  },
+  {
+    "id": "sample-3",
+    "name": "Habibi Ya Nour El Ain",
+    "artists": ["Amr Diab"],
+    "album": "Nour El Ein",
+    "albumArt": "",
+    "year": "1996",
+    "durationMs": 30000,
+    "previewUrl": "",
+    "spotifyUrl": "https://open.spotify.com/track/0UpoJMJDMJwFWKuTsNPuZb"
+  },
+  {
+    "id": "sample-4",
+    "name": "Kifak Inta",
+    "artists": ["Fairuz"],
+    "album": "Kifak Inta",
+    "albumArt": "",
+    "year": "1987",
+    "durationMs": 30000,
+    "previewUrl": "",
+    "spotifyUrl": "https://open.spotify.com/track/5Bvtt1DUVBDFShMGdJEUYC"
+  },
+  {
+    "id": "sample-5",
+    "name": "Aatini Al Nay",
+    "artists": ["Fairuz"],
+    "album": "Fairuz In Concert",
+    "albumArt": "",
+    "year": "1988",
+    "durationMs": 30000,
+    "previewUrl": "",
+    "spotifyUrl": "https://open.spotify.com/track/0JXOoYfNq0RxVXoJAHPLpB"
+  }
+]
