@@ -1,11 +1,11 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 import { theme } from '../theme';
 import { APP_VERSION, DecadeKey, RegionKey, ALL_DECADES, ALL_REGIONS, DECADE_LABELS, REGIONS } from '../constants';
 import { useT, useLang } from '../../App';
 
 interface HomeScreenProps {
-  onStart: (decades: DecadeKey[], regions: RegionKey[]) => void;
+  onStart: (decades: DecadeKey[], regions: RegionKey[], players: string[]) => void;
 }
 
 export function HomeScreen({ onStart }: HomeScreenProps) {
@@ -13,8 +13,32 @@ export function HomeScreen({ onStart }: HomeScreenProps) {
   const { lang, setLang } = useLang();
   const [decades, setDecades] = React.useState<DecadeKey[]>([]);
   const [regions, setRegions] = React.useState<RegionKey[]>([]);
+  const [players, setPlayers] = React.useState<string[]>(['']);
 
   const toggleLang = () => setLang(lang === 'en' ? 'ar' : 'en');
+
+  const updatePlayer = (idx: number, name: string) => {
+    setPlayers((prev) => {
+      const next = [...prev];
+      next[idx] = name;
+      return next;
+    });
+  };
+
+  const addPlayer = () => {
+    if (players.length < 4) setPlayers((prev) => [...prev, '']);
+  };
+
+  const removePlayer = (idx: number) => {
+    if (players.length > 1) setPlayers((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  const canStart = decades.length > 0 && regions.length > 0 && players.some((p) => p.trim());
+
+  const handleStartClick = () => {
+    const names = players.map((p, i) => p.trim() || __('player') + ' ' + (i + 1));
+    onStart(decades, regions, names);
+  };
 
   const toggleDecade = (d: DecadeKey) => {
     setDecades((prev) =>
@@ -35,8 +59,6 @@ export function HomeScreen({ onStart }: HomeScreenProps) {
   const toggleAllRegions = () => {
     setRegions(regions.length === ALL_REGIONS.length ? [] : [...ALL_REGIONS]);
   };
-
-  const canStart = decades.length > 0 && regions.length > 0;
 
   return (
     <View style={styles.container}>
@@ -103,9 +125,33 @@ export function HomeScreen({ onStart }: HomeScreenProps) {
         </TouchableOpacity>
       </View>
 
+      <Text style={styles.pickLabel}>{__('players')}</Text>
+      {players.map((p, i) => (
+        <View key={i} style={styles.playerRow}>
+          <TextInput
+            style={styles.playerInput}
+            value={p}
+            onChangeText={(t) => updatePlayer(i, t)}
+            placeholder={__('playerName') + ' ' + (i + 1)}
+            placeholderTextColor={theme.colors.textMuted}
+            maxLength={12}
+          />
+          {players.length > 1 && (
+            <TouchableOpacity onPress={() => removePlayer(i)} style={styles.removeBtn}>
+              <Text style={styles.removeBtnText}>✕</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      ))}
+      {players.length < 4 && (
+        <TouchableOpacity onPress={addPlayer} style={styles.addPlayerBtn}>
+          <Text style={styles.addPlayerText}>+ {__('addPlayer')}</Text>
+        </TouchableOpacity>
+      )}
+
       <TouchableOpacity
         style={[styles.startButton, !canStart && styles.startButtonDisabled]}
-        onPress={() => onStart(decades, regions)}
+        onPress={handleStartClick}
         disabled={!canStart}
         activeOpacity={0.7}
       >
@@ -226,5 +272,43 @@ const styles = StyleSheet.create({
     bottom: theme.spacing.xxl,
     color: theme.colors.textMuted,
     fontSize: theme.fontSize.xs,
+  },
+  playerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: theme.spacing.sm,
+  },
+  playerInput: {
+    backgroundColor: theme.colors.card,
+    color: theme.colors.text,
+    borderRadius: theme.borderRadius.sm,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
+    fontSize: theme.fontSize.md,
+    minWidth: 180,
+    textAlign: 'center',
+  },
+  removeBtn: {
+    marginLeft: theme.spacing.sm,
+    backgroundColor: theme.colors.danger,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  removeBtnText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  addPlayerBtn: {
+    paddingVertical: theme.spacing.xs,
+    marginBottom: theme.spacing.sm,
+  },
+  addPlayerText: {
+    color: theme.colors.primary,
+    fontSize: theme.fontSize.sm,
+    fontWeight: '600',
   },
 });

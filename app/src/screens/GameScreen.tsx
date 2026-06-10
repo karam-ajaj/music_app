@@ -17,10 +17,15 @@ import { DecadeKey, RegionKey } from '../constants';
 interface GameScreenProps {
   decades: DecadeKey[];
   regions: RegionKey[];
+  players: string[];
+  scores: number[];
+  currentPlayer: number;
   onBack: () => void;
+  onCorrect: () => void;
+  onSkip: () => void;
 }
 
-export function GameScreen({ decades, regions, onBack }: GameScreenProps) {
+export function GameScreen({ decades, regions, players, scores, currentPlayer, onBack, onCorrect, onSkip }: GameScreenProps) {
   const __ = useT();
   const { player, status, playTrack } = useAudioPlayer();
   const {
@@ -111,10 +116,27 @@ export function GameScreen({ decades, regions, onBack }: GameScreenProps) {
         <TouchableOpacity onPress={onBack} activeOpacity={0.7} style={styles.backBtn}>
           <Text style={styles.backBtnText}>⌂</Text>
         </TouchableOpacity>
+
+        {players.length > 1 && (
+          <View style={styles.scoreRow}>
+            {players.map((p, i) => (
+              <View
+                key={i}
+                style={[styles.scoreBadge, i === currentPlayer && styles.scoreBadgeActive]}
+              >
+                <Text style={[styles.scoreName, i === currentPlayer && styles.scoreNameActive]}>
+                  {p}
+                </Text>
+                <Text style={[styles.scorePts, i === currentPlayer && styles.scorePtsActive]}>
+                  {scores[i] || 0}
+                </Text>
+              </View>
+            ))}
+          </View>
+        )}
+
         <View style={styles.statsCol}>
-          <Text style={styles.counter}>
-            {playedCount}/{totalSongs}
-          </Text>
+          <Text style={styles.counter}>{playedCount}/{totalSongs}</Text>
           {trackCount > 0 && (
             <Text style={styles.statsDetail}>
               {trackCount} songs · {artistCount} artists
@@ -127,7 +149,12 @@ export function GameScreen({ decades, regions, onBack }: GameScreenProps) {
         {phase === 'playing' && (
           <>
             <View style={styles.guessArea}>
-              <Text style={styles.guessLabel}>{__('whatSong')}</Text>
+              <Text style={styles.guessLabel}>
+                {players.length > 1
+                  ? `${players[currentPlayer]}، ${__('yourTurn')}`
+                  : __('listenGuess')}
+              </Text>
+              <Text style={styles.guessSubLabel}>{__('guessArtist')}</Text>
               <View style={styles.mysteryDisc}>
                 <Text style={styles.mysteryIcon}>🎶</Text>
               </View>
@@ -170,13 +197,22 @@ export function GameScreen({ decades, regions, onBack }: GameScreenProps) {
           <>
             <SongReveal track={currentTrack} />
 
-            <TouchableOpacity
-              style={styles.nextButton}
-              onPress={handleNextSong}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.nextButtonText}>{__('nextSong')}</Text>
-            </TouchableOpacity>
+            <View style={styles.resultRow}>
+              <TouchableOpacity
+                style={styles.correctBtn}
+                onPress={() => { onCorrect(); nextSong(); }}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.correctBtnText}>✓ {__('correct')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.skipBtn}
+                onPress={() => { onSkip(); nextSong(); }}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.skipBtnText}>→ {__('skip')}</Text>
+              </TouchableOpacity>
+            </View>
           </>
         )}
       </View>
@@ -199,7 +235,7 @@ const styles = StyleSheet.create({
     right: theme.spacing.lg,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   backBtn: {
     paddingVertical: theme.spacing.sm,
@@ -223,6 +259,40 @@ const styles = StyleSheet.create({
     fontSize: theme.fontSize.xs,
     marginTop: 2,
   },
+  scoreRow: {
+    flexDirection: 'row',
+    gap: theme.spacing.xs,
+    flex: 1,
+    justifyContent: 'center',
+    marginHorizontal: theme.spacing.sm,
+  },
+  scoreBadge: {
+    backgroundColor: theme.colors.card,
+    borderRadius: theme.borderRadius.sm,
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing.xs,
+    alignItems: 'center',
+    minWidth: 50,
+  },
+  scoreBadgeActive: {
+    backgroundColor: theme.colors.primary,
+  },
+  scoreName: {
+    color: theme.colors.textSecondary,
+    fontSize: theme.fontSize.xs,
+  },
+  scoreNameActive: {
+    color: theme.colors.background,
+    fontWeight: '700',
+  },
+  scorePts: {
+    color: theme.colors.primary,
+    fontSize: theme.fontSize.md,
+    fontWeight: '700',
+  },
+  scorePtsActive: {
+    color: theme.colors.background,
+  },
   content: {
     width: '100%',
     alignItems: 'center',
@@ -235,7 +305,14 @@ const styles = StyleSheet.create({
     color: theme.colors.textSecondary,
     fontSize: theme.fontSize.lg,
     fontWeight: '600',
-    marginBottom: theme.spacing.xl,
+    marginBottom: theme.spacing.sm,
+    textAlign: 'center',
+  },
+  guessSubLabel: {
+    color: theme.colors.textMuted,
+    fontSize: theme.fontSize.sm,
+    marginBottom: theme.spacing.md,
+    textAlign: 'center',
   },
   mysteryDisc: {
     width: 120,
@@ -275,19 +352,38 @@ const styles = StyleSheet.create({
     fontSize: theme.fontSize.lg,
     fontWeight: '700',
   },
-  nextButton: {
-    backgroundColor: theme.colors.primary,
+  resultRow: {
+    flexDirection: 'row',
+    gap: theme.spacing.md,
+    marginTop: theme.spacing.xl,
+  },
+  correctBtn: {
+    backgroundColor: theme.colors.success,
     paddingVertical: theme.spacing.md,
-    paddingHorizontal: theme.spacing.xxl,
+    paddingHorizontal: theme.spacing.xl,
     borderRadius: theme.borderRadius.full,
     alignItems: 'center',
-    marginTop: theme.spacing.xl,
-    width: '100%',
+    flex: 1,
   },
-  nextButtonText: {
-    color: theme.colors.background,
+  correctBtnText: {
+    color: '#fff',
     fontSize: theme.fontSize.lg,
     fontWeight: '700',
+  },
+  skipBtn: {
+    backgroundColor: theme.colors.card,
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.xl,
+    borderRadius: theme.borderRadius.full,
+    alignItems: 'center',
+    flex: 1,
+    borderWidth: 1,
+    borderColor: theme.colors.textMuted,
+  },
+  skipBtnText: {
+    color: theme.colors.textMuted,
+    fontSize: theme.fontSize.lg,
+    fontWeight: '600',
   },
   loadingText: {
     color: theme.colors.textSecondary,
