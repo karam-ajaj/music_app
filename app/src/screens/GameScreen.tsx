@@ -53,8 +53,8 @@ export function GameScreen({ decades, regions, onBack }: GameScreenProps) {
   }, [currentTrack?.id]);
 
   const handleReplay = () => {
-    player?.setPositionAsync(0);
-    player?.playAsync();
+    player.seekTo(0);
+    player.play();
   };
 
   const handleReveal = () => {
@@ -132,9 +132,9 @@ export function GameScreen({ decades, regions, onBack }: GameScreenProps) {
                 finished={finished}
                 onPlayPause={() => {
                   if (status.playing) {
-                    player?.pauseAsync();
+                    player.pause();
                   } else {
-                    player?.playAsync();
+                    player.play();
                   }
                 }}
                 onReplay={handleReplay}
