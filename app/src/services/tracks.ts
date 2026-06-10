@@ -37,7 +37,7 @@ function toTrack(item: iTunesResult): Track {
 
 async function searchArtist(artist: string): Promise<Track[]> {
   const query = encodeURIComponent(artist);
-  const url = `https://itunes.apple.com/search?term=${query}&country=eg&entity=song&limit=15`;
+  const url = `https://itunes.apple.com/search?term=${query}&country=eg&entity=song&limit=20`;
   const res = await fetch(url);
   const json = await res.json();
   const results = (json.results || []) as iTunesResult[];
