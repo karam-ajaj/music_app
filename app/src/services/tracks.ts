@@ -50,23 +50,26 @@ async function searchArtist(artist: ArtistEntry): Promise<Track[]> {
     fetchFromItunes(artist.ar),
   ]);
 
+  const arWithPreview = arResults.filter((r) => r.previewUrl && r.trackName);
+  console.log(`${artist.en}: EN=${enResults.filter(r=>r.previewUrl).length} AR=${arWithPreview.length}`);
+
   const arNameByUrl = new Map<string, string>();
-  for (const r of arResults) {
-    if (r.previewUrl && r.trackName) {
-      arNameByUrl.set(r.previewUrl, r.trackName);
-    }
+  for (const r of arWithPreview) {
+    arNameByUrl.set(r.previewUrl, r.trackName);
   }
 
   const trackMap = new Map<string, Track>();
+  let matched = 0;
   for (const r of enResults) {
     if (!r.previewUrl || !r.trackName || !r.artistName) continue;
     const id = String(r.trackId);
     if (trackMap.has(id)) continue;
-    const arName = arNameByUrl.get(r.previewUrl) || r.trackName;
+    const arName = arNameByUrl.get(r.previewUrl);
+    if (arName) matched++;
     trackMap.set(id, {
       id,
       name: r.trackName,
-      nameAr: arName,
+      nameAr: arName || r.trackName,
       artists: [artist.en],
       artistsAr: [artist.ar],
       album: r.collectionName,
@@ -77,11 +80,11 @@ async function searchArtist(artist: ArtistEntry): Promise<Track[]> {
     });
   }
 
-  for (const r of arResults) {
-    if (!r.previewUrl || !r.trackName || !r.artistName) continue;
+  let arOnly = 0;
+  for (const r of arWithPreview) {
     const id = String(r.trackId);
-    if (trackMap.has(id)) continue;
-    if ([...trackMap.values()].some((t) => t.previewUrl === r.previewUrl)) continue;
+    if (trackMap.has(id)) { arOnly++; continue; }
+    if ([...trackMap.values()].some((t) => t.previewUrl === r.previewUrl)) { arOnly++; continue; }
     trackMap.set(id, {
       id,
       name: r.trackName,
@@ -94,6 +97,10 @@ async function searchArtist(artist: ArtistEntry): Promise<Track[]> {
       durationMs: r.trackTimeMillis,
       previewUrl: r.previewUrl,
     });
+  }
+
+  if (matched === 0 && arWithPreview.length > 0) {
+    console.log(`  WARNING: 0 URL matches but ${arWithPreview.length} Arabic tracks exist. Sample EN url: ${enResults.find(r=>r.previewUrl)?.previewUrl?.substring(0,60)} Sample AR url: ${arWithPreview[0].previewUrl.substring(0,60)}`);
   }
 
   return [...trackMap.values()];

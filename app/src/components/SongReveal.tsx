@@ -13,8 +13,9 @@ const ART_SIZE = Dimensions.get('window').width * 0.5;
 export function SongReveal({ track }: SongRevealProps) {
   const { lang } = useLang();
   const isAr = lang === 'ar';
+  const hasArName = /[\u0600-\u06FF]/.test(track.nameAr || '');
 
-  const displayName = isAr && track.nameAr ? track.nameAr : track.name;
+  const displayName = isAr && hasArName ? track.nameAr : track.name;
   const displayArtist = isAr ? track.artistsAr.join(' \u060C ') : track.artists.join(', ');
 
   return (
