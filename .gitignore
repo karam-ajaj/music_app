@@ -29,3 +29,6 @@ Thumbs.db
 
 # TypeScript
 *.tsbuildinfo
+
+# Deploy keys
+deploy_key*
