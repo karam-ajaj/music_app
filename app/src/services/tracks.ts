@@ -34,7 +34,7 @@ async function fetchFromItunes(term: string): Promise<iTunesResult[]> {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 8000);
     const query = encodeURIComponent(term);
-    const url = `https://itunes.apple.com/search?term=${query}&country=eg&entity=song&limit=8`;
+    const url = `https://itunes.apple.com/search?term=${query}&country=eg&entity=song&limit=10`;
     const res = await fetch(url, { signal: controller.signal });
     clearTimeout(timer);
     const json = await res.json();
