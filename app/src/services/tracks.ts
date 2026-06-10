@@ -111,10 +111,16 @@ function artistsForRegions(regions: RegionKey[]): ArtistEntry[] {
 }
 
 export async function fetchTracks(decades: DecadeKey[], regions: RegionKey[]): Promise<Track[]> {
+  console.log('fetchTracks — decades:', decades, 'regions:', regions);
   const artists = artistsForRegions(regions);
+  console.log('artists for regions:', artists.length);
   const allTracks = await searchBatched(artists, 3);
+  console.log('allTracks from API:', allTracks.length);
   const unique = allTracks.filter(
     (track, idx, self) => self.findIndex((t) => t.id === track.id) === idx
   );
-  return shuffle(filterByDecades(unique, decades));
+  console.log('unique tracks:', unique.length);
+  const filtered = filterByDecades(unique, decades);
+  console.log('after decade filter:', filtered.length);
+  return shuffle(filtered);
 }

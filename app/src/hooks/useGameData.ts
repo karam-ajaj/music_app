@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { Track, GamePhase } from '../types';
 import { fetchTracks } from '../services/tracks';
 import { DecadeKey, RegionKey } from '../constants';
@@ -11,11 +11,23 @@ export function useGameData(decades: DecadeKey[], regions: RegionKey[]) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const decadesRef = useRef(decades);
+  const regionsRef = useRef(regions);
+
+  useEffect(() => {
+    decadesRef.current = decades;
+    regionsRef.current = regions;
+  }, [decades, regions]);
+
   const startGame = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const tracks = await fetchTracks(decades, regions);
+      const d = decadesRef.current;
+      const r = regionsRef.current;
+      console.log('startGame filters — decades:', d, 'regions:', r);
+      const tracks = await fetchTracks(d, r);
+      console.log('fetched tracks count:', tracks.length);
       if (tracks.length === 0) {
         setError('No songs found for this selection.');
         return;
@@ -32,7 +44,7 @@ export function useGameData(decades: DecadeKey[], regions: RegionKey[]) {
     } finally {
       setLoading(false);
     }
-  }, [decades, regions]);
+  }, []);
 
   const pickNext = useCallback(() => {
     if (queue.length === 0) {
