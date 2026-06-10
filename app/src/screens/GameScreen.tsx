@@ -30,6 +30,8 @@ export function GameScreen({ decades, regions, onBack }: GameScreenProps) {
     queue,
     loading,
     error,
+    trackCount,
+    artistCount,
     startGame,
     reveal,
     nextSong,
@@ -109,9 +111,16 @@ export function GameScreen({ decades, regions, onBack }: GameScreenProps) {
         <TouchableOpacity onPress={onBack} activeOpacity={0.7} style={styles.backBtn}>
           <Text style={styles.backBtnText}>⌂</Text>
         </TouchableOpacity>
-        <Text style={styles.counter}>
-          {playedCount} / {totalSongs}
-        </Text>
+        <View style={styles.statsCol}>
+          <Text style={styles.counter}>
+            {playedCount}/{totalSongs}
+          </Text>
+          {trackCount > 0 && (
+            <Text style={styles.statsDetail}>
+              {trackCount} songs · {artistCount} artists
+            </Text>
+          )}
+        </View>
       </View>
 
       <View style={styles.content}>
@@ -204,6 +213,15 @@ const styles = StyleSheet.create({
     color: theme.colors.textMuted,
     fontSize: theme.fontSize.sm,
     fontWeight: '600',
+    textAlign: 'right',
+  },
+  statsCol: {
+    alignItems: 'flex-end',
+  },
+  statsDetail: {
+    color: theme.colors.textMuted,
+    fontSize: theme.fontSize.xs,
+    marginTop: 2,
   },
   content: {
     width: '100%',

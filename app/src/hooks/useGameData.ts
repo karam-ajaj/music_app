@@ -10,6 +10,8 @@ export function useGameData(decades: DecadeKey[], regions: RegionKey[]) {
   const [playedIds, setPlayedIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [trackCount, setTrackCount] = useState(0);
+  const [artistCount, setArtistCount] = useState(0);
 
   const decadesRef = useRef(decades);
   const regionsRef = useRef(regions);
@@ -25,16 +27,18 @@ export function useGameData(decades: DecadeKey[], regions: RegionKey[]) {
     try {
       const d = decadesRef.current;
       const r = regionsRef.current;
-      console.log('startGame filters — decades:', d, 'regions:', r);
       const tracks = await fetchTracks(d, r);
-      console.log('fetched tracks count:', tracks.length);
       if (tracks.length === 0) {
         setError('No songs found for this selection.');
+        setTrackCount(0);
+        setArtistCount(0);
         return;
       }
       setQueue(tracks);
       setPlayedIds([]);
       setPhase('playing');
+      setTrackCount(tracks.length);
+      setArtistCount(new Set(tracks.flatMap((t) => t.artists)).size);
 
       const track = tracks[tracks.length - 1];
       setCurrentTrack(track);
@@ -76,6 +80,8 @@ export function useGameData(decades: DecadeKey[], regions: RegionKey[]) {
     playedIds,
     loading,
     error,
+    trackCount,
+    artistCount,
     startGame,
     reveal,
     nextSong,
