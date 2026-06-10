@@ -50,60 +50,59 @@ async function searchArtist(artist: ArtistEntry): Promise<Track[]> {
     fetchFromItunes(artist.ar),
   ]);
 
+  const enWithPreview = enResults.filter((r) => r.previewUrl && r.trackName);
   const arWithPreview = arResults.filter((r) => r.previewUrl && r.trackName);
-  console.log(`${artist.en}: EN=${enResults.filter(r=>r.previewUrl).length} AR=${arWithPreview.length}`);
-
-  const arNameByUrl = new Map<string, string>();
-  for (const r of arWithPreview) {
-    arNameByUrl.set(r.previewUrl, r.trackName);
-  }
+  console.log(`${artist.en}: EN=${enWithPreview.length} AR=${arWithPreview.length}`);
 
   const trackMap = new Map<string, Track>();
-  let matched = 0;
-  for (const r of enResults) {
-    if (!r.previewUrl || !r.trackName || !r.artistName) continue;
-    const id = String(r.trackId);
-    if (trackMap.has(id)) continue;
-    const arName = arNameByUrl.get(r.previewUrl);
-    if (arName) matched++;
-    trackMap.set(id, {
-      id,
-      name: r.trackName,
-      nameAr: arName || r.trackName,
-      artists: [artist.en],
-      artistsAr: [artist.ar],
-      album: r.collectionName,
-      albumArt: (r.artworkUrl100 || '').replace('100x100', '600x600'),
-      year: (r.releaseDate || '').slice(0, 4),
-      durationMs: r.trackTimeMillis,
-      previewUrl: r.previewUrl,
-    });
-  }
 
-  let arOnly = 0;
+  // First: add Arabic results (these get Arabic names)
   for (const r of arWithPreview) {
     const id = String(r.trackId);
-    if (trackMap.has(id)) { arOnly++; continue; }
-    if ([...trackMap.values()].some((t) => t.previewUrl === r.previewUrl)) { arOnly++; continue; }
-    trackMap.set(id, {
-      id,
-      name: r.trackName,
-      nameAr: r.trackName,
-      artists: [artist.en],
-      artistsAr: [artist.ar],
-      album: r.collectionName,
-      albumArt: (r.artworkUrl100 || '').replace('100x100', '600x600'),
-      year: (r.releaseDate || '').slice(0, 4),
-      durationMs: r.trackTimeMillis,
-      previewUrl: r.previewUrl,
-    });
+    trackMap.set(id, makeTrack(r, artist, r.trackName));
   }
 
-  if (matched === 0 && arWithPreview.length > 0) {
-    console.log(`  WARNING: 0 URL matches but ${arWithPreview.length} Arabic tracks exist. Sample EN url: ${enResults.find(r=>r.previewUrl)?.previewUrl?.substring(0,60)} Sample AR url: ${arWithPreview[0].previewUrl.substring(0,60)}`);
+  // Build URL → Arabic name map for matching English results
+  const arNameByUrl = new Map<string, string>();
+  for (const r of arWithPreview) arNameByUrl.set(r.previewUrl, r.trackName);
+
+  // Second: add English results, overwriting name to English for URL matches
+  for (const r of enWithPreview) {
+    const id = String(r.trackId);
+    const existing = trackMap.get(id);
+    const arName = arNameByUrl.get(r.previewUrl);
+
+    if (existing) {
+      existing.name = r.trackName;
+      if (arName) existing.nameAr = arName;
+    } else {
+      // Check if this English track matches an Arabic track by preview URL
+      const arMatch = [...trackMap.values()].find((t) => t.previewUrl === r.previewUrl);
+      if (arMatch) {
+        arMatch.name = r.trackName;
+        if (!arMatch.nameAr) arMatch.nameAr = r.trackName;
+      } else {
+        trackMap.set(id, makeTrack(r, artist, arName || r.trackName));
+      }
+    }
   }
 
   return [...trackMap.values()];
+}
+
+function makeTrack(r: iTunesResult, artist: ArtistEntry, nameAr: string): Track {
+  return {
+    id: String(r.trackId),
+    name: r.trackName,
+    nameAr,
+    artists: [artist.en],
+    artistsAr: [artist.ar],
+    album: r.collectionName,
+    albumArt: (r.artworkUrl100 || '').replace('100x100', '600x600'),
+    year: (r.releaseDate || '').slice(0, 4),
+    durationMs: r.trackTimeMillis,
+    previewUrl: r.previewUrl,
+  };
 }
 
 async function searchBatched(artists: ArtistEntry[], batchSize: number): Promise<Track[]> {
