@@ -14,6 +14,7 @@ export function HomeScreen({ onStart }: HomeScreenProps) {
   const [decades, setDecades] = React.useState<DecadeKey[]>([]);
   const [regions, setRegions] = React.useState<RegionKey[]>([]);
   const [players, setPlayers] = React.useState<string[]>(['']);
+  const [showHelp, setShowHelp] = React.useState(false);
 
   const toggleLang = () => setLang(lang === 'en' ? 'ar' : 'en');
 
@@ -64,6 +65,10 @@ export function HomeScreen({ onStart }: HomeScreenProps) {
     <View style={styles.container}>
       <TouchableOpacity style={styles.langToggle} onPress={toggleLang} activeOpacity={0.7}>
         <Text style={styles.langToggleText}>{__('langLabel')}</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.helpToggle} onPress={() => setShowHelp(true)} activeOpacity={0.7}>
+        <Text style={styles.helpToggleText}>?</Text>
       </TouchableOpacity>
 
       <View style={styles.hero}>
@@ -159,6 +164,18 @@ export function HomeScreen({ onStart }: HomeScreenProps) {
       </TouchableOpacity>
 
       <Text style={styles.footer}>v{APP_VERSION}</Text>
+
+      {showHelp && (
+        <View style={styles.helpOverlay}>
+          <View style={styles.helpCard}>
+            <Text style={styles.helpTitle}>{__('howToPlay')}</Text>
+            <Text style={styles.helpText}>{__('helpText')}</Text>
+            <TouchableOpacity onPress={() => setShowHelp(false)} style={styles.helpCloseBtn}>
+              <Text style={styles.helpCloseText}>{__('gotIt')}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
     </View>
   );
 }
@@ -267,12 +284,6 @@ const styles = StyleSheet.create({
     fontSize: theme.fontSize.lg,
     fontWeight: '700',
   },
-  footer: {
-    position: 'absolute',
-    bottom: theme.spacing.xxl,
-    color: theme.colors.textMuted,
-    fontSize: theme.fontSize.xs,
-  },
   playerRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -310,5 +321,69 @@ const styles = StyleSheet.create({
     color: theme.colors.primary,
     fontSize: theme.fontSize.sm,
     fontWeight: '600',
+  },
+  footer: {
+    position: 'absolute',
+    bottom: theme.spacing.xxl,
+    color: theme.colors.textMuted,
+    fontSize: theme.fontSize.xs,
+  },
+  helpToggle: {
+    position: 'absolute',
+    top: theme.spacing.xxl,
+    left: theme.spacing.lg,
+    backgroundColor: theme.colors.surface,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: theme.colors.primary,
+  },
+  helpToggleText: {
+    color: theme.colors.primary,
+    fontSize: theme.fontSize.md,
+    fontWeight: '700',
+  },
+  helpOverlay: {
+    position: 'absolute',
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: theme.spacing.xl,
+  },
+  helpCard: {
+    backgroundColor: theme.colors.card,
+    borderRadius: theme.borderRadius.lg,
+    padding: theme.spacing.xl,
+    width: '100%',
+    maxHeight: '80%',
+  },
+  helpTitle: {
+    color: theme.colors.primary,
+    fontSize: theme.fontSize.xl,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginBottom: theme.spacing.lg,
+  },
+  helpText: {
+    color: theme.colors.textSecondary,
+    fontSize: theme.fontSize.md,
+    lineHeight: 22,
+    textAlign: 'center',
+    marginBottom: theme.spacing.lg,
+  },
+  helpCloseBtn: {
+    backgroundColor: theme.colors.primary,
+    paddingVertical: theme.spacing.sm,
+    borderRadius: theme.borderRadius.full,
+    alignItems: 'center',
+  },
+  helpCloseText: {
+    color: theme.colors.background,
+    fontSize: theme.fontSize.md,
+    fontWeight: '700',
   },
 });
