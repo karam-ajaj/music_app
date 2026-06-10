@@ -1,5 +1,5 @@
 import { Track } from '../types';
-import { ITUNES_ARABIC_ARTISTS, Decade } from '../constants';
+import { ALL_ARTISTS, REGIONS, Decade, Region } from '../constants';
 
 interface iTunesResult {
   trackId: number;
@@ -70,8 +70,15 @@ function filterByDecade(tracks: Track[], decade: Decade): Track[] {
   });
 }
 
-export async function fetchTracks(decade: Decade = 'all'): Promise<Track[]> {
-  const allTracks = await searchBatched(ITUNES_ARABIC_ARTISTS, 5);
+function artistsForRegion(region: Region): string[] {
+  if (region === 'all') return ALL_ARTISTS;
+  const r = REGIONS.find((r) => r.key === region);
+  return r ? r.artists : ALL_ARTISTS;
+}
+
+export async function fetchTracks(decade: Decade = 'all', region: Region = 'all'): Promise<Track[]> {
+  const artists = artistsForRegion(region);
+  const allTracks = await searchBatched(artists, 5);
   const unique = allTracks.filter(
     (track, idx, self) => self.findIndex((t) => t.id === track.id) === idx
   );

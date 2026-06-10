@@ -1,23 +1,25 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { theme } from '../theme';
-import { APP_NAME, Decade } from '../constants';
+import { APP_NAME, Decade, Region, REGIONS } from '../constants';
 import { useT, useLang } from '../../App';
 
 interface HomeScreenProps {
-  onStart: (decade: Decade) => void;
+  onStart: (decade: Decade, region: Region) => void;
 }
 
 const DECADES: { key: Decade; labelEn: string; labelAr: string }[] = [
   { key: '70s', labelEn: '70s', labelAr: 'السبعينات' },
   { key: '80s', labelEn: '80s', labelAr: 'الثمانينات' },
   { key: '90s', labelEn: '90s', labelAr: 'التسعينات' },
-  { key: 'all', labelEn: 'All Eras', labelAr: 'كل العصور' },
+  { key: 'all', labelEn: 'All', labelAr: 'الكل' },
 ];
 
 export function HomeScreen({ onStart }: HomeScreenProps) {
   const __ = useT();
   const { lang, setLang } = useLang();
+  const [decade, setDecade] = React.useState<Decade>('all');
+  const [region, setRegion] = React.useState<Region>('all');
 
   const toggleLang = () => setLang(lang === 'en' ? 'ar' : 'en');
 
@@ -32,31 +34,58 @@ export function HomeScreen({ onStart }: HomeScreenProps) {
           <Text style={styles.logo}>🎵</Text>
         </View>
         <Text style={styles.title}>{APP_NAME}</Text>
-        <Text style={styles.subtitle}>
-          {__('subtitleDetail')}
-        </Text>
       </View>
 
       <Text style={styles.pickLabel}>{__('pickDecade')}</Text>
-
-      <View style={styles.decadeGrid}>
+      <View style={styles.chipRow}>
         {DECADES.map((d) => (
           <TouchableOpacity
             key={d.key}
-            style={[styles.decadeButton, d.key === 'all' && styles.decadeButtonAll]}
-            onPress={() => onStart(d.key)}
+            style={[styles.chip, decade === d.key && styles.chipActive]}
+            onPress={() => setDecade(d.key)}
             activeOpacity={0.7}
           >
-            <Text style={styles.decadeButtonText}>
+            <Text style={[styles.chipText, decade === d.key && styles.chipTextActive]}>
               {lang === 'ar' ? d.labelAr : d.labelEn}
             </Text>
           </TouchableOpacity>
         ))}
       </View>
 
-      <Text style={styles.footer}>
-        {__('poweredBy')}
-      </Text>
+      <Text style={styles.pickLabel}>{__('pickRegion')}</Text>
+      <View style={styles.chipRow}>
+        {REGIONS.map((r) => (
+          <TouchableOpacity
+            key={r.key}
+            style={[styles.chip, region === r.key && styles.chipActive]}
+            onPress={() => setRegion(r.key)}
+            activeOpacity={0.7}
+          >
+            <Text style={[styles.chipText, region === r.key && styles.chipTextActive]}>
+              {lang === 'ar' ? r.labelAr : r.labelEn}
+            </Text>
+          </TouchableOpacity>
+        ))}
+        <TouchableOpacity
+          style={[styles.chip, region === 'all' && styles.chipActive]}
+          onPress={() => setRegion('all')}
+          activeOpacity={0.7}
+        >
+          <Text style={[styles.chipText, region === 'all' && styles.chipTextActive]}>
+            {__('allRegions')}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <TouchableOpacity
+        style={styles.startButton}
+        onPress={() => onStart(decade, region)}
+        activeOpacity={0.7}
+      >
+        <Text style={styles.startButtonText}>{__('startGame')}</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.footer}>{__('poweredBy')}</Text>
     </View>
   );
 }
@@ -67,7 +96,8 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: theme.spacing.xl,
+    paddingHorizontal: theme.spacing.lg,
+    paddingTop: theme.spacing.xxl,
   },
   langToggle: {
     position: 'absolute',
@@ -88,64 +118,75 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.xl,
   },
   logoContainer: {
-    width: 100,
-    height: 100,
+    width: 80,
+    height: 80,
     borderRadius: theme.borderRadius.xl,
     backgroundColor: theme.colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: theme.spacing.xl,
+    marginBottom: theme.spacing.md,
     elevation: 4,
     shadowColor: theme.colors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 12,
   },
-  logo: {
-    fontSize: 48,
-  },
+  logo: { fontSize: 40 },
   title: {
     fontSize: theme.fontSize.title,
     fontWeight: '800',
     color: theme.colors.primary,
-    marginBottom: theme.spacing.md,
-  },
-  subtitle: {
-    fontSize: theme.fontSize.md,
-    color: theme.colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 24,
   },
   pickLabel: {
     color: theme.colors.textSecondary,
-    fontSize: theme.fontSize.md,
+    fontSize: theme.fontSize.sm,
     fontWeight: '600',
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.spacing.sm,
+    marginTop: theme.spacing.md,
   },
-  decadeGrid: {
+  chipRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    gap: theme.spacing.md,
-    marginBottom: theme.spacing.xxl,
+    gap: theme.spacing.sm,
+    marginBottom: theme.spacing.sm,
   },
-  decadeButton: {
+  chip: {
     backgroundColor: theme.colors.card,
-    paddingVertical: theme.spacing.md,
-    paddingHorizontal: theme.spacing.lg,
-    borderRadius: theme.borderRadius.md,
+    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.md,
+    borderRadius: theme.borderRadius.full,
     borderWidth: 1,
+    borderColor: theme.colors.surface,
+  },
+  chipActive: {
+    backgroundColor: theme.colors.primary,
     borderColor: theme.colors.primary,
-    minWidth: 120,
+  },
+  chipText: {
+    color: theme.colors.textSecondary,
+    fontSize: theme.fontSize.sm,
+    fontWeight: '600',
+  },
+  chipTextActive: {
+    color: theme.colors.background,
+  },
+  startButton: {
+    backgroundColor: theme.colors.primary,
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.xxl,
+    borderRadius: theme.borderRadius.full,
+    marginTop: theme.spacing.lg,
+    elevation: 4,
+    shadowColor: theme.colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    minWidth: 200,
     alignItems: 'center',
   },
-  decadeButtonAll: {
-    minWidth: '80%',
-    backgroundColor: theme.colors.primary,
-    borderColor: theme.colors.primaryDark,
-  },
-  decadeButtonText: {
-    color: theme.colors.text,
+  startButtonText: {
+    color: theme.colors.background,
     fontSize: theme.fontSize.lg,
     fontWeight: '700',
   },
@@ -153,6 +194,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: theme.spacing.xxl,
     color: theme.colors.textMuted,
-    fontSize: theme.fontSize.sm,
+    fontSize: theme.fontSize.xs,
   },
 });

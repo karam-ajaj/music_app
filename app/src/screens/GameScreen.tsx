@@ -12,13 +12,14 @@ import { theme } from '../theme';
 import { useAudioPlayer } from '../hooks/useAudioPlayer';
 import { useGameData } from '../hooks/useGameData';
 import { useT } from '../../App';
-import { Decade } from '../constants';
+import { Decade, Region } from '../constants';
 
 interface GameScreenProps {
   decade: Decade;
+  region: Region;
 }
 
-export function GameScreen({ decade }: GameScreenProps) {
+export function GameScreen({ decade, region }: GameScreenProps) {
   const __ = useT();
   const { player, status, playTrack, stopPlayback } = useAudioPlayer();
   const {
@@ -31,7 +32,7 @@ export function GameScreen({ decade }: GameScreenProps) {
     startGame,
     reveal,
     nextSong,
-  } = useGameData(decade);
+  } = useGameData(decade, region);
 
   const totalSongs = playedIds.length + queue.length + (currentTrack ? 1 : 0);
   const playedCount = playedIds.length + 1;
@@ -44,7 +45,6 @@ export function GameScreen({ decade }: GameScreenProps) {
   }, [currentTrack?.id]);
 
   const handleReveal = () => {
-    stopPlayback();
     reveal();
   };
 
