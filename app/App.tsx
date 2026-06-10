@@ -23,7 +23,7 @@ export const useT = () => {
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>('home');
-  const [lang, setLang] = useState<Language>('en');
+  const [lang, setLang] = useState<Language>('ar');
   const [decades, setDecades] = useState<DecadeKey[]>([]);
   const [regions, setRegions] = useState<RegionKey[]>([]);
 
