@@ -1,4 +1,4 @@
-export const APP_NAME = 'Nagham';
+export const APP_NAME = 'اسمع';
 
 export type DecadeKey = '70s' | '80s' | '90s';
 export type RegionKey = 'egypt' | 'levant' | 'gulf' | 'iraq' | 'maghreb';

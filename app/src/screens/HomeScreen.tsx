@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { theme } from '../theme';
-import { APP_NAME, DecadeKey, RegionKey, ALL_DECADES, ALL_REGIONS, DECADE_LABELS, REGIONS } from '../constants';
+import { DecadeKey, RegionKey, ALL_DECADES, ALL_REGIONS, DECADE_LABELS, REGIONS } from '../constants';
 import { useT, useLang } from '../../App';
 
 interface HomeScreenProps {
@@ -46,9 +46,11 @@ export function HomeScreen({ onStart }: HomeScreenProps) {
 
       <View style={styles.hero}>
         <View style={styles.logoContainer}>
-          <Text style={styles.logo}>🎵</Text>
+          <Text style={styles.logo}>اسمع</Text>
         </View>
-        <Text style={styles.title}>{APP_NAME}</Text>
+        <Text style={styles.subtitle}>
+          {__('subtitle')}
+        </Text>
       </View>
 
       <Text style={styles.pickLabel}>{__('pickDecade')}</Text>
@@ -143,8 +145,8 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.xl,
   },
   logoContainer: {
-    width: 80,
-    height: 80,
+    width: 120,
+    height: 120,
     borderRadius: theme.borderRadius.xl,
     backgroundColor: theme.colors.surface,
     alignItems: 'center',
@@ -156,11 +158,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 12,
   },
-  logo: { fontSize: 40 },
-  title: {
-    fontSize: theme.fontSize.title,
-    fontWeight: '800',
-    color: theme.colors.primary,
+  logo: { fontSize: 48, color: theme.colors.primary, fontWeight: '800' },
+  subtitle: {
+    fontSize: theme.fontSize.md,
+    color: theme.colors.textSecondary,
+    textAlign: 'center',
+    marginTop: theme.spacing.sm,
   },
   pickLabel: {
     color: theme.colors.textSecondary,

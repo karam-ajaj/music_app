@@ -2,6 +2,7 @@ export type Language = 'en' | 'ar';
 
 const translations: Record<Language, Record<string, string>> = {
   en: {
+    subtitle: 'Arabic Music Trivia',
     pickDecade: 'Era:',
     pickRegion: 'Region:',
     all: 'All',
@@ -21,6 +22,7 @@ const translations: Record<Language, Record<string, string>> = {
     langLabel: 'العربية',
   },
   ar: {
+    subtitle: 'تحدي الأغاني العربية',
     pickDecade: 'الحقبة:',
     pickRegion: 'المنطقة:',
     all: 'الكل',
