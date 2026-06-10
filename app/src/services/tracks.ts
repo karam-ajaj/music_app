@@ -1,6 +1,16 @@
 import { Track } from '../types';
-import { DATA_SOURCE, API_BASE_URL } from '../constants';
-import tracksData from '../data/tracks.json';
+import { ITUNES_ARABIC_ARTISTS } from '../constants';
+
+interface iTunesResult {
+  trackId: number;
+  trackName: string;
+  artistName: string;
+  collectionName: string;
+  artworkUrl100: string;
+  previewUrl: string;
+  trackTimeMillis: number;
+  releaseDate: string;
+}
 
 function shuffle<T>(array: T[]): T[] {
   const arr = [...array];
@@ -11,14 +21,37 @@ function shuffle<T>(array: T[]): T[] {
   return arr;
 }
 
+function toTrack(item: iTunesResult): Track {
+  return {
+    id: String(item.trackId),
+    name: item.trackName,
+    artists: [item.artistName],
+    album: item.collectionName,
+    albumArt: item.artworkUrl100?.replace('100x100', '600x600') || '',
+    year: (item.releaseDate || '').slice(0, 4),
+    durationMs: item.trackTimeMillis,
+    previewUrl: item.previewUrl,
+    spotifyUrl: '',
+  };
+}
+
+async function searchArtist(artist: string): Promise<Track[]> {
+  const query = encodeURIComponent(artist);
+  const url = `https://itunes.apple.com/search?term=${query}&country=eg&entity=song&limit=15`;
+  const res = await fetch(url);
+  const json = await res.json();
+  const results = (json.results || []) as iTunesResult[];
+  return results
+    .filter((r) => r.previewUrl && r.trackName && r.artistName)
+    .map(toTrack);
+}
+
 export async function fetchTracks(): Promise<Track[]> {
-  switch (DATA_SOURCE) {
-    case 'local':
-      return shuffle(tracksData as Track[]);
-    case 'api': {
-      const res = await fetch(`${API_BASE_URL}/api/tracks`);
-      const json = await res.json();
-      return json as Track[];
-    }
-  }
+  const artistPromises = ITUNES_ARABIC_ARTISTS.map(searchArtist);
+  const artistResults = await Promise.all(artistPromises);
+  const allTracks = artistResults.flat();
+  const unique = allTracks.filter(
+    (track, idx, self) => self.findIndex((t) => t.id === track.id) === idx
+  );
+  return shuffle(unique);
 }

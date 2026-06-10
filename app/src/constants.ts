@@ -1,11 +1,26 @@
-export const SPOTIFY_PLAYLIST_ID = '37i9dQZF1DXaHuo0R6jTxZ';
-
-export const DATA_SOURCE: 'local' | 'api' = 'local';
-
-export const API_BASE_URL = __DEV__
-  ? 'http://localhost:3000'
-  : 'https://arabic-hitster-api.railway.app';
-
-export const PREVIEW_DURATION_MS = 10000;
-
 export const APP_NAME = 'Arabic Hitster';
+
+export const PREVIEW_DURATION_MS = 12000;
+
+export const ITUNES_ARABIC_ARTISTS = [
+  'Amr Diab',
+  'Fairuz',
+  'Umm Kulthum',
+  'Abdel Halim Hafez',
+  'Kazem Al Saher',
+  'Nancy Ajram',
+  'Ragheb Alama',
+  'Wael Kfoury',
+  'Elissa',
+  'Mohamed Mounir',
+  'Sabah',
+  'Warda',
+  'George Wassouf',
+  'Majida El Roumi',
+  'Assala Nasri',
+  'Cheb Khaled',
+  'Samira Said',
+  'Hani Shaker',
+  'Mohamed Fouad',
+  'Abdul Majeed Abdullah',
+];
