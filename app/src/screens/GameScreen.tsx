@@ -4,7 +4,9 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
+  ScrollView,
   ActivityIndicator,
+  Dimensions,
 } from 'react-native';
 import { AudioPlayer } from '../components/AudioPlayer';
 import { SongReveal } from '../components/SongReveal';
@@ -13,6 +15,8 @@ import { useAudioPlayer } from '../hooks/useAudioPlayer';
 import { useGameData } from '../hooks/useGameData';
 import { useT } from '../../App';
 import { DecadeKey, RegionKey } from '../constants';
+
+const { height: WINDOW_HEIGHT } = Dimensions.get('window');
 
 interface GameScreenProps {
   decades: DecadeKey[];
@@ -46,18 +50,44 @@ export function GameScreen({ decades, regions, players, scores, onBack, onScore,
   const hasAudio = !!currentTrack?.previewUrl;
   const [showHelp, setShowHelp] = React.useState(false);
 
+  const compact = WINDOW_HEIGHT < 700;
+  const discSize = compact ? 80 : 120;
+
+  const pendingPlayRef = React.useRef(false);
+
   const finished =
     hasAudio &&
+    status.didJustFinish &&
     !status.playing &&
-    status.duration > 0 &&
-    status.currentTime > 0.5 &&
-    status.currentTime >= status.duration - 1;
+    status.currentTime > 0.5;
 
   React.useEffect(() => {
     if (currentTrack && phase === 'playing') {
+      pendingPlayRef.current = true;
       playTrack(currentTrack);
+      const timeout = setTimeout(() => {
+        if (pendingPlayRef.current && phase === 'playing') {
+          pendingPlayRef.current = false;
+          player.play();
+        }
+      }, 10000);
+      return () => clearTimeout(timeout);
     }
   }, [currentTrack?.id]);
+
+  React.useEffect(() => {
+    if (pendingPlayRef.current && status.isLoaded && phase === 'playing') {
+      pendingPlayRef.current = false;
+      player.play();
+    }
+  }, [status.isLoaded, phase]);
+
+  React.useEffect(() => {
+    if (status.isLoaded && !status.playing && !pendingPlayRef.current) {
+      pendingPlayRef.current = false;
+    }
+  }, []);
+
 
   const handleReplay = () => {
     player.seekTo(0);
@@ -125,7 +155,7 @@ export function GameScreen({ decades, regions, players, scores, onBack, onScore,
           <View style={styles.scoreRow}>
             {players.map((p, i) => (
               <View key={i} style={styles.scoreBadge}>
-                <Text style={styles.scoreName}>{p}</Text>
+                <Text style={styles.scoreName} numberOfLines={1}>{p}</Text>
                 <Text style={styles.scorePts}>{scores[i] || 0}</Text>
               </View>
             ))}
@@ -142,13 +172,17 @@ export function GameScreen({ decades, regions, players, scores, onBack, onScore,
         </View>
       </View>
 
-      <View style={styles.content}>
+      <ScrollView
+        style={styles.contentScroll}
+        contentContainerStyle={styles.contentScrollInner}
+        showsVerticalScrollIndicator={false}
+      >
         {phase === 'playing' && (
           <>
             <View style={styles.guessArea}>
               <Text style={styles.guessLabel}>{__('listenGuess')}</Text>
               <Text style={styles.guessSubLabel}>{__('guessArtist')}</Text>
-              <View style={styles.mysteryDisc}>
+              <View style={[styles.mysteryDisc, { width: discSize, height: discSize }]}>
                 <Text style={styles.mysteryIcon}>🎶</Text>
               </View>
             </View>
@@ -159,6 +193,9 @@ export function GameScreen({ decades, regions, players, scores, onBack, onScore,
                 currentTime={status.currentTime}
                 duration={status.duration}
                 finished={finished}
+                compact={compact}
+                isBuffering={status.isBuffering}
+                isLoaded={status.isLoaded}
                 onPlayPause={() => {
                   if (status.playing) {
                     player.pause();
@@ -222,19 +259,21 @@ export function GameScreen({ decades, regions, players, scores, onBack, onScore,
             )}
           </>
         )}
+      </ScrollView>
 
-        {showHelp && (
-          <View style={styles.helpOverlay}>
-            <View style={styles.helpCard}>
+      {showHelp && (
+        <View style={styles.helpOverlay}>
+          <View style={styles.helpCard}>
+            <ScrollView style={{ flex: 1 }}>
               <Text style={styles.helpTitle}>{__('howToPlay')}</Text>
               <Text style={styles.helpText}>{__('helpText')}</Text>
-              <TouchableOpacity onPress={() => setShowHelp(false)} style={styles.helpCloseBtn}>
-                <Text style={styles.helpCloseText}>{__('gotIt')}</Text>
-              </TouchableOpacity>
-            </View>
+            </ScrollView>
+            <TouchableOpacity onPress={() => setShowHelp(false)} style={styles.helpCloseBtn}>
+              <Text style={styles.helpCloseText}>{__('gotIt')}</Text>
+            </TouchableOpacity>
           </View>
-        )}
-      </View>
+        </View>
+      )}
     </View>
   );
 }
@@ -244,8 +283,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background,
     paddingHorizontal: theme.spacing.lg,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   header: {
     position: 'absolute',
@@ -302,9 +339,15 @@ const styles = StyleSheet.create({
     fontSize: theme.fontSize.md,
     fontWeight: '700',
   },
-  content: {
+  contentScroll: {
+    flex: 1,
     width: '100%',
+  },
+  contentScrollInner: {
+    flexGrow: 1,
     alignItems: 'center',
+    justifyContent: 'center',
+    paddingBottom: theme.spacing.xl,
   },
   guessArea: {
     alignItems: 'center',
@@ -324,8 +367,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   mysteryDisc: {
-    width: 120,
-    height: 120,
     borderRadius: theme.borderRadius.full,
     backgroundColor: theme.colors.surface,
     alignItems: 'center',

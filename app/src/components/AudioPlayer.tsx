@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { theme } from '../theme';
 import { useT } from '../../App';
 
@@ -8,6 +8,9 @@ interface AudioPlayerProps {
   currentTime: number;
   duration: number;
   finished: boolean;
+  compact?: boolean;
+  isBuffering: boolean;
+  isLoaded: boolean;
   onPlayPause: () => void;
   onReplay: () => void;
 }
@@ -19,9 +22,13 @@ function formatTime(seconds: number): string {
   return `${mm}:${ss.toString().padStart(2, '0')}`;
 }
 
-export function AudioPlayer({ playing, currentTime, duration, finished, onPlayPause, onReplay }: AudioPlayerProps) {
+export function AudioPlayer({ playing, currentTime, duration, finished, compact, isBuffering, isLoaded, onPlayPause, onReplay }: AudioPlayerProps) {
   const __ = useT();
   const progress = duration > 0 ? Math.min(currentTime / duration, 1) : 0;
+  const btnSize = compact ? 64 : 80;
+  const btnIconSize = compact ? 26 : 32;
+
+  const isLoading = !isLoaded && !playing;
 
   return (
     <View style={styles.container}>
@@ -44,18 +51,25 @@ export function AudioPlayer({ playing, currentTime, duration, finished, onPlayPa
           <Text style={styles.replayIcon}>↻</Text>
           <Text style={styles.replayLabel}>{__('replay')}</Text>
         </TouchableOpacity>
+      ) : isLoading ? (
+        <>
+          <View style={[styles.playButton, { width: btnSize, height: btnSize }]}>
+            <ActivityIndicator size={compact ? 'small' : 'large'} color={theme.colors.background} />
+          </View>
+          <Text style={styles.statusText}>{__('loadingPreview')}</Text>
+        </>
       ) : (
         <>
           <TouchableOpacity
-            style={[styles.playButton, playing && styles.playButtonActive]}
+            style={[styles.playButton, { width: btnSize, height: btnSize }, playing && styles.playButtonActive]}
             onPress={onPlayPause}
             activeOpacity={0.7}
           >
-            <Text style={styles.playIcon}>{playing ? '⏸' : '▶'}</Text>
+            <Text style={[styles.playIcon, { fontSize: btnIconSize }]}>{playing ? '⏸' : '▶'}</Text>
           </TouchableOpacity>
 
           <Text style={styles.statusText}>
-            {playing ? __('playingPreview') : __('paused')}
+            {isBuffering ? __('loadingPreview') : playing ? __('playingPreview') : __('paused')}
           </Text>
         </>
       )}
@@ -93,8 +107,6 @@ const styles = StyleSheet.create({
     fontSize: theme.fontSize.xs,
   },
   playButton: {
-    width: 80,
-    height: 80,
     borderRadius: theme.borderRadius.full,
     backgroundColor: theme.colors.primary,
     alignItems: 'center',
@@ -109,7 +121,6 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primaryDark,
   },
   playIcon: {
-    fontSize: 32,
     color: theme.colors.background,
   },
   statusText: {

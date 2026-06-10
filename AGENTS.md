@@ -2,7 +2,7 @@
 
 ## Overview
 
-Nagham is a cross-platform mobile music trivia game built with **Expo (React Native) + TypeScript**. Players listen to a 90-second iTunes preview and guess the song. The app searches iTunes Search API at runtime for Arabic artists across 5 regions, fetches track previews, and runs a guessing game with decade/region filtering.
+Nagham is a cross-platform mobile music trivia game built with **Expo (React Native) + TypeScript**. Players listen to a 30-second iTunes preview and guess the song. The app searches iTunes Search API at runtime for Arabic artists across 5 regions, fetches track previews, and runs a guessing game with decade/region filtering.
 
 - **No backend, no credentials, no extraction scripts** — everything runs client-side via free iTunes API
 - **Bilingual** — English/Arabic UI toggle + Arabic song/artist names displayed in Arabic mode
@@ -58,7 +58,7 @@ Nagham is a cross-platform mobile music trivia game built with **Expo (React Nat
 ## Key Architecture Decisions
 
 ### Why iTunes API instead of Spotify?
-Spotify Web API requires Premium + registered developer app. iTunes Search API is completely free, no auth, provides 90-second AAC previews + album art. Downside: song data depends on what's listed on iTunes Egypt store.
+Spotify Web API requires Premium + registered developer app. iTunes Search API is completely free, no auth, provides 30-second AAC previews + album art. Downside: song data depends on what's listed on iTunes Egypt store.
 
 ### Batching API calls
 Fetching 57 artists in parallel saturated mobile network connections, causing audio stutter. The app now fetches artists in **batches of 3** with **8-second timeouts**. Failed artists are silently skipped so one dead query doesn't kill the whole game.
