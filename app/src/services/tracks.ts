@@ -148,10 +148,22 @@ function artistsForRegions(regions: RegionKey[]): ArtistEntry[] {
   return [...map.values()];
 }
 
+const BROAD_ARABIC_TERMS: ArtistEntry[] = [
+  { en: 'arabic music', ar: 'موسيقى عربية' },
+  { en: 'arabic songs', ar: 'اغاني عربية' },
+  { en: 'music arabe', ar: 'موسيقى عربية' },
+  { en: 'tarab', ar: 'طرب' },
+];
+
 export async function fetchTracks(decades: DecadeKey[], regions: RegionKey[]): Promise<Track[]> {
   console.log('fetchTracks — decades:', decades, 'regions:', regions);
-  const artists = artistsForRegions(regions);
-  console.log('artists for regions:', artists.length);
+  let artists = artistsForRegions(regions);
+
+  if (regions.length === ALL_REGIONS.length) {
+    artists = [...artists, ...BROAD_ARABIC_TERMS];
+  }
+
+  console.log('artists (+ broad terms):', artists.length);
   const allTracks = await searchBatched(artists, 3);
   console.log('allTracks from API:', allTracks.length);
   const unique = allTracks.filter(
