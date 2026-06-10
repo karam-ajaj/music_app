@@ -103,12 +103,14 @@ git add -A && git commit -m "description"
 git push
 
 # Create a version tag to trigger APK build:
-git tag v2.X.Y && git push origin v2.X.Y
+git tag v0.X.Y && git push origin v0.X.Y
 ```
 The tag triggers `.github/workflows/build-app.yml` which:
 1. Sets up Node 22 + Java 17 + Android SDK
 2. Generates a keystore, runs `expo prebuild`, builds with Gradle
 3. Uploads the signed APK as a build artifact + GitHub Release asset
+
+The deploy key for pushing is `deploy_key_music`. The last published version was v0.11.
 
 The APK will be on https://github.com/karam-ajaj/music_app/releases
 
