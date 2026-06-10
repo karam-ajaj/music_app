@@ -15,16 +15,10 @@ export function useAudioPlayer() {
     player.pause();
   };
 
-  const replayFromStart = () => {
-    player.seekTo(0);
-    player.play();
-  };
-
   return {
     player,
     status,
     playTrack,
     stopPlayback,
-    replayFromStart,
   };
 }

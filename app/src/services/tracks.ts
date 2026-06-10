@@ -52,6 +52,16 @@ async function searchArtist(artist: string): Promise<Track[]> {
     .map(toTrack);
 }
 
+async function searchBatched(artists: string[], batchSize: number): Promise<Track[]> {
+  const allTracks: Track[] = [];
+  for (let i = 0; i < artists.length; i += batchSize) {
+    const batch = artists.slice(i, i + batchSize);
+    const results = await Promise.all(batch.map(searchArtist));
+    allTracks.push(...results.flat());
+  }
+  return allTracks;
+}
+
 function filterByDecade(tracks: Track[], decade: Decade): Track[] {
   const [start, end] = DECADE_RANGE[decade];
   return tracks.filter((t) => {
@@ -61,9 +71,7 @@ function filterByDecade(tracks: Track[], decade: Decade): Track[] {
 }
 
 export async function fetchTracks(decade: Decade = 'all'): Promise<Track[]> {
-  const artistPromises = ITUNES_ARABIC_ARTISTS.map(searchArtist);
-  const artistResults = await Promise.all(artistPromises);
-  const allTracks = artistResults.flat();
+  const allTracks = await searchBatched(ITUNES_ARABIC_ARTISTS, 5);
   const unique = allTracks.filter(
     (track, idx, self) => self.findIndex((t) => t.id === track.id) === idx
   );
