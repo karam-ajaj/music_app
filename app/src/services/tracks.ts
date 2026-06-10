@@ -111,14 +111,20 @@ async function searchBatched(artists: ArtistEntry[], batchSize: number): Promise
 
 function filterByDecades(tracks: Track[], decades: DecadeKey[]): Track[] {
   if (decades.length === ALL_DECADES.length) return tracks;
-  return tracks.filter((t) => {
+  let noYear = 0;
+  let kept = 0;
+  const result = tracks.filter((t) => {
     const y = parseInt(t.year, 10);
-    if (isNaN(y)) return false;
-    return decades.some((d) => {
+    if (isNaN(y)) { noYear++; return true; }
+    const match = decades.some((d) => {
       const [start, end] = DECADE_RANGE[d];
       return y >= start && y <= end;
     });
+    if (match) kept++;
+    return match;
   });
+  console.log('filterByDecades — no year:', noYear, 'matched:', kept, 'total filtered:', result.length);
+  return result;
 }
 
 function artistsForRegions(regions: RegionKey[]): ArtistEntry[] {
