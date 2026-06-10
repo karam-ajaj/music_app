@@ -80,11 +80,11 @@ export function HomeScreen({ onStart }: HomeScreenProps) {
         {DECADE_LABELS.map((d) => (
           <TouchableOpacity
             key={d.key}
-            style={[styles.chip, decades.includes(d.key) && styles.chipActive]}
+            style={[styles.chip, decades.includes(d.key) && decades.length !== ALL_DECADES.length && styles.chipActive]}
             onPress={() => toggleDecade(d.key)}
             activeOpacity={0.7}
           >
-            <Text style={[styles.chipText, decades.includes(d.key) && styles.chipTextActive]}>
+            <Text style={[styles.chipText, decades.includes(d.key) && decades.length !== ALL_DECADES.length && styles.chipTextActive]}>
               {lang === 'ar' ? d.labelAr : d.labelEn}
             </Text>
           </TouchableOpacity>
@@ -105,11 +105,11 @@ export function HomeScreen({ onStart }: HomeScreenProps) {
         {REGIONS.map((r) => (
           <TouchableOpacity
             key={r.key}
-            style={[styles.chip, regions.includes(r.key) && styles.chipActive]}
+            style={[styles.chip, regions.includes(r.key) && regions.length !== ALL_REGIONS.length && styles.chipActive]}
             onPress={() => toggleRegion(r.key)}
             activeOpacity={0.7}
           >
-            <Text style={[styles.chipText, regions.includes(r.key) && styles.chipTextActive]}>
+            <Text style={[styles.chipText, regions.includes(r.key) && regions.length !== ALL_REGIONS.length && styles.chipTextActive]}>
               {lang === 'ar' ? r.labelAr : r.labelEn}
             </Text>
           </TouchableOpacity>
