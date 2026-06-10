@@ -12,14 +12,15 @@ import { theme } from '../theme';
 import { useAudioPlayer } from '../hooks/useAudioPlayer';
 import { useGameData } from '../hooks/useGameData';
 import { useT } from '../../App';
-import { Decade, Region } from '../constants';
+import { DecadeKey, RegionKey } from '../constants';
 
 interface GameScreenProps {
-  decade: Decade;
-  region: Region;
+  decades: DecadeKey[];
+  regions: RegionKey[];
+  onBack: () => void;
 }
 
-export function GameScreen({ decade, region }: GameScreenProps) {
+export function GameScreen({ decades, regions, onBack }: GameScreenProps) {
   const __ = useT();
   const { player, status, playTrack } = useAudioPlayer();
   const {
@@ -32,7 +33,7 @@ export function GameScreen({ decade, region }: GameScreenProps) {
     startGame,
     reveal,
     nextSong,
-  } = useGameData(decade, region);
+  } = useGameData(decades, regions);
 
   const totalSongs = playedIds.length + queue.length + (currentTrack ? 1 : 0);
   const playedCount = playedIds.length + 1;
@@ -93,6 +94,9 @@ export function GameScreen({ decade, region }: GameScreenProps) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
+        <TouchableOpacity onPress={onBack} activeOpacity={0.7} style={styles.backBtn}>
+          <Text style={styles.backBtnText}>← {__('home')}</Text>
+        </TouchableOpacity>
         <Text style={styles.counter}>
           {playedCount} / {totalSongs}
         </Text>
@@ -168,7 +172,20 @@ const styles = StyleSheet.create({
   header: {
     position: 'absolute',
     top: theme.spacing.xxl,
+    left: theme.spacing.lg,
     right: theme.spacing.lg,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  backBtn: {
+    paddingVertical: theme.spacing.xs,
+    paddingRight: theme.spacing.md,
+  },
+  backBtnText: {
+    color: theme.colors.primary,
+    fontSize: theme.fontSize.sm,
+    fontWeight: '600',
   },
   counter: {
     color: theme.colors.textMuted,

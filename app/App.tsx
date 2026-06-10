@@ -5,7 +5,7 @@ import { HomeScreen } from './src/screens/HomeScreen';
 import { GameScreen } from './src/screens/GameScreen';
 import { theme } from './src/theme';
 import { Language, t } from './src/i18n';
-import { Decade, Region } from './src/constants';
+import { DecadeKey, RegionKey } from './src/constants';
 
 type Screen = 'home' | 'game';
 
@@ -24,13 +24,17 @@ export const useT = () => {
 export default function App() {
   const [screen, setScreen] = useState<Screen>('home');
   const [lang, setLang] = useState<Language>('en');
-  const [decade, setDecade] = useState<Decade>('all');
-  const [region, setRegion] = useState<Region>('all');
+  const [decades, setDecades] = useState<DecadeKey[]>([]);
+  const [regions, setRegions] = useState<RegionKey[]>([]);
 
-  const handleStart = useCallback((d: Decade, r: Region) => {
-    setDecade(d);
-    setRegion(r);
+  const handleStart = useCallback((d: DecadeKey[], r: RegionKey[]) => {
+    setDecades(d);
+    setRegions(r);
     setScreen('game');
+  }, []);
+
+  const handleBack = useCallback(() => {
+    setScreen('home');
   }, []);
 
   return (
@@ -41,7 +45,7 @@ export default function App() {
           <HomeScreen onStart={handleStart} />
         )}
         {screen === 'game' && (
-          <GameScreen decade={decade} region={region} />
+          <GameScreen decades={decades} regions={regions} onBack={handleBack} />
         )}
       </View>
     </LangContext.Provider>

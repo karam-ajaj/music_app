@@ -1,27 +1,42 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { theme } from '../theme';
-import { APP_NAME, Decade, Region, REGIONS } from '../constants';
+import { APP_NAME, DecadeKey, RegionKey, ALL_DECADES, ALL_REGIONS, DECADE_LABELS, REGIONS } from '../constants';
 import { useT, useLang } from '../../App';
 
 interface HomeScreenProps {
-  onStart: (decade: Decade, region: Region) => void;
+  onStart: (decades: DecadeKey[], regions: RegionKey[]) => void;
 }
-
-const DECADES: { key: Decade; labelEn: string; labelAr: string }[] = [
-  { key: '70s', labelEn: '70s', labelAr: 'السبعينات' },
-  { key: '80s', labelEn: '80s', labelAr: 'الثمانينات' },
-  { key: '90s', labelEn: '90s', labelAr: 'التسعينات' },
-  { key: 'all', labelEn: 'All', labelAr: 'الكل' },
-];
 
 export function HomeScreen({ onStart }: HomeScreenProps) {
   const __ = useT();
   const { lang, setLang } = useLang();
-  const [decade, setDecade] = React.useState<Decade>('all');
-  const [region, setRegion] = React.useState<Region>('all');
+  const [decades, setDecades] = React.useState<DecadeKey[]>([...ALL_DECADES]);
+  const [regions, setRegions] = React.useState<RegionKey[]>([...ALL_REGIONS]);
 
   const toggleLang = () => setLang(lang === 'en' ? 'ar' : 'en');
+
+  const toggleDecade = (d: DecadeKey) => {
+    setDecades((prev) =>
+      prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d]
+    );
+  };
+
+  const toggleAllDecades = () => {
+    setDecades(decades.length === ALL_DECADES.length ? [] : [...ALL_DECADES]);
+  };
+
+  const toggleRegion = (r: RegionKey) => {
+    setRegions((prev) =>
+      prev.includes(r) ? prev.filter((x) => x !== r) : [...prev, r]
+    );
+  };
+
+  const toggleAllRegions = () => {
+    setRegions(regions.length === ALL_REGIONS.length ? [] : [...ALL_REGIONS]);
+  };
+
+  const canStart = decades.length > 0 && regions.length > 0;
 
   return (
     <View style={styles.container}>
@@ -38,18 +53,27 @@ export function HomeScreen({ onStart }: HomeScreenProps) {
 
       <Text style={styles.pickLabel}>{__('pickDecade')}</Text>
       <View style={styles.chipRow}>
-        {DECADES.map((d) => (
+        {DECADE_LABELS.map((d) => (
           <TouchableOpacity
             key={d.key}
-            style={[styles.chip, decade === d.key && styles.chipActive]}
-            onPress={() => setDecade(d.key)}
+            style={[styles.chip, decades.includes(d.key) && styles.chipActive]}
+            onPress={() => toggleDecade(d.key)}
             activeOpacity={0.7}
           >
-            <Text style={[styles.chipText, decade === d.key && styles.chipTextActive]}>
+            <Text style={[styles.chipText, decades.includes(d.key) && styles.chipTextActive]}>
               {lang === 'ar' ? d.labelAr : d.labelEn}
             </Text>
           </TouchableOpacity>
         ))}
+        <TouchableOpacity
+          style={[styles.chip, decades.length === ALL_DECADES.length && styles.chipActive]}
+          onPress={toggleAllDecades}
+          activeOpacity={0.7}
+        >
+          <Text style={[styles.chipText, decades.length === ALL_DECADES.length && styles.chipTextActive]}>
+            {__('all')}
+          </Text>
+        </TouchableOpacity>
       </View>
 
       <Text style={styles.pickLabel}>{__('pickRegion')}</Text>
@@ -57,29 +81,30 @@ export function HomeScreen({ onStart }: HomeScreenProps) {
         {REGIONS.map((r) => (
           <TouchableOpacity
             key={r.key}
-            style={[styles.chip, region === r.key && styles.chipActive]}
-            onPress={() => setRegion(r.key)}
+            style={[styles.chip, regions.includes(r.key) && styles.chipActive]}
+            onPress={() => toggleRegion(r.key)}
             activeOpacity={0.7}
           >
-            <Text style={[styles.chipText, region === r.key && styles.chipTextActive]}>
+            <Text style={[styles.chipText, regions.includes(r.key) && styles.chipTextActive]}>
               {lang === 'ar' ? r.labelAr : r.labelEn}
             </Text>
           </TouchableOpacity>
         ))}
         <TouchableOpacity
-          style={[styles.chip, region === 'all' && styles.chipActive]}
-          onPress={() => setRegion('all')}
+          style={[styles.chip, regions.length === ALL_REGIONS.length && styles.chipActive]}
+          onPress={toggleAllRegions}
           activeOpacity={0.7}
         >
-          <Text style={[styles.chipText, region === 'all' && styles.chipTextActive]}>
-            {__('allRegions')}
+          <Text style={[styles.chipText, regions.length === ALL_REGIONS.length && styles.chipTextActive]}>
+            {__('all')}
           </Text>
         </TouchableOpacity>
       </View>
 
       <TouchableOpacity
-        style={styles.startButton}
-        onPress={() => onStart(decade, region)}
+        style={[styles.startButton, !canStart && styles.startButtonDisabled]}
+        onPress={() => onStart(decades, regions)}
+        disabled={!canStart}
         activeOpacity={0.7}
       >
         <Text style={styles.startButtonText}>{__('startGame')}</Text>
@@ -184,6 +209,9 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     minWidth: 200,
     alignItems: 'center',
+  },
+  startButtonDisabled: {
+    opacity: 0.4,
   },
   startButtonText: {
     color: theme.colors.background,

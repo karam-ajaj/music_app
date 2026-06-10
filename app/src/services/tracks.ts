@@ -1,5 +1,5 @@
 import { Track } from '../types';
-import { ALL_ARTISTS, REGIONS, Decade, Region } from '../constants';
+import { ALL_ARTISTS, REGIONS, ALL_DECADES, ALL_REGIONS, DecadeKey, RegionKey } from '../constants';
 
 interface iTunesResult {
   trackId: number;
@@ -34,11 +34,10 @@ function toTrack(item: iTunesResult): Track {
   };
 }
 
-const DECADE_RANGE: Record<Decade, [number, number]> = {
+const DECADE_RANGE: Record<DecadeKey, [number, number]> = {
   '70s': [1970, 1979],
   '80s': [1980, 1989],
   '90s': [1990, 1999],
-  all: [0, 9999],
 };
 
 async function searchArtist(artist: string): Promise<Track[]> {
@@ -69,25 +68,33 @@ async function searchBatched(artists: string[], batchSize: number): Promise<Trac
   return allTracks;
 }
 
-function filterByDecade(tracks: Track[], decade: Decade): Track[] {
-  const [start, end] = DECADE_RANGE[decade];
+function filterByDecades(tracks: Track[], decades: DecadeKey[]): Track[] {
+  if (decades.length === ALL_DECADES.length) return tracks;
   return tracks.filter((t) => {
     const y = parseInt(t.year, 10);
-    return !isNaN(y) && y >= start && y <= end;
+    if (isNaN(y)) return false;
+    return decades.some((d) => {
+      const [start, end] = DECADE_RANGE[d];
+      return y >= start && y <= end;
+    });
   });
 }
 
-function artistsForRegion(region: Region): string[] {
-  if (region === 'all') return ALL_ARTISTS;
-  const r = REGIONS.find((r) => r.key === region);
-  return r ? r.artists : ALL_ARTISTS;
+function artistsForRegions(regions: RegionKey[]): string[] {
+  if (regions.length === ALL_REGIONS.length) return ALL_ARTISTS;
+  const set = new Set<string>();
+  for (const r of regions) {
+    const data = REGIONS.find((rd) => rd.key === r);
+    if (data) data.artists.forEach((a) => set.add(a));
+  }
+  return [...set];
 }
 
-export async function fetchTracks(decade: Decade = 'all', region: Region = 'all'): Promise<Track[]> {
-  const artists = artistsForRegion(region);
+export async function fetchTracks(decades: DecadeKey[], regions: RegionKey[]): Promise<Track[]> {
+  const artists = artistsForRegions(regions);
   const allTracks = await searchBatched(artists, 3);
   const unique = allTracks.filter(
     (track, idx, self) => self.findIndex((t) => t.id === track.id) === idx
   );
-  return shuffle(filterByDecade(unique, decade));
+  return shuffle(filterByDecades(unique, decades));
 }

@@ -4,7 +4,7 @@ const translations: Record<Language, Record<string, string>> = {
   en: {
     pickDecade: 'Era:',
     pickRegion: 'Region:',
-    allRegions: 'All',
+    all: 'All',
     startGame: 'Start Game',
     poweredBy: 'Powered by iTunes',
     loadingSongs: 'Loading songs...',
@@ -17,12 +17,13 @@ const translations: Record<Language, Record<string, string>> = {
     paused: 'Paused',
     loadingPreview: 'Loading preview...',
     restart: 'Start Game',
+    home: 'Home',
     langLabel: 'العربية',
   },
   ar: {
     pickDecade: 'الحقبة:',
     pickRegion: 'المنطقة:',
-    allRegions: 'الكل',
+    all: 'الكل',
     startGame: 'ابدأ اللعبة',
     poweredBy: 'مشغل بواسطة iTunes',
     loadingSongs: 'جار تحميل الأغاني...',
@@ -35,6 +36,7 @@ const translations: Record<Language, Record<string, string>> = {
     paused: 'متوقف',
     loadingPreview: 'جار تحميل المقطع...',
     restart: 'ابدأ اللعبة',
+    home: 'الرئيسية',
     langLabel: 'English',
   },
 };

@@ -1,10 +1,19 @@
 export const APP_NAME = 'Nagham';
 
-export type Decade = '70s' | '80s' | '90s' | 'all';
-export type Region = 'egypt' | 'levant' | 'gulf' | 'iraq' | 'maghreb' | 'all';
+export type DecadeKey = '70s' | '80s' | '90s';
+export type RegionKey = 'egypt' | 'levant' | 'gulf' | 'iraq' | 'maghreb';
+
+export const ALL_DECADES: DecadeKey[] = ['70s', '80s', '90s'];
+export const ALL_REGIONS: RegionKey[] = ['egypt', 'levant', 'gulf', 'iraq', 'maghreb'];
+
+export const DECADE_LABELS: { key: DecadeKey; labelEn: string; labelAr: string }[] = [
+  { key: '70s', labelEn: '70s', labelAr: 'السبعينات' },
+  { key: '80s', labelEn: '80s', labelAr: 'الثمانينات' },
+  { key: '90s', labelEn: '90s', labelAr: 'التسعينات' },
+];
 
 export interface RegionData {
-  key: Region;
+  key: RegionKey;
   labelEn: string;
   labelAr: string;
   artists: string[];
