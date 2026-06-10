@@ -39,11 +39,23 @@ export function GameScreen({ decades, regions, onBack }: GameScreenProps) {
   const playedCount = playedIds.length + 1;
   const hasAudio = !!currentTrack?.previewUrl;
 
+  const finished =
+    hasAudio &&
+    !status.playing &&
+    status.duration > 0 &&
+    status.currentTime > 0.5 &&
+    status.currentTime >= status.duration - 1;
+
   React.useEffect(() => {
     if (currentTrack && phase === 'playing') {
       playTrack(currentTrack);
     }
   }, [currentTrack?.id]);
+
+  const handleReplay = () => {
+    player.seekTo(0);
+    player.play();
+  };
 
   const handleReveal = () => {
     reveal();
@@ -117,6 +129,7 @@ export function GameScreen({ decades, regions, onBack }: GameScreenProps) {
                 playing={status.playing}
                 currentTime={status.currentTime}
                 duration={status.duration}
+                finished={finished}
                 onPlayPause={() => {
                   if (status.playing) {
                     player.pause();
@@ -124,6 +137,7 @@ export function GameScreen({ decades, regions, onBack }: GameScreenProps) {
                     player.play();
                   }
                 }}
+                onReplay={handleReplay}
               />
             ) : (
               <View style={styles.demoNotice}>

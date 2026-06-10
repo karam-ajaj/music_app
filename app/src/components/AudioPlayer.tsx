@@ -7,7 +7,9 @@ interface AudioPlayerProps {
   playing: boolean;
   currentTime: number;
   duration: number;
+  finished: boolean;
   onPlayPause: () => void;
+  onReplay: () => void;
 }
 
 function formatTime(seconds: number): string {
@@ -17,9 +19,9 @@ function formatTime(seconds: number): string {
   return `${mm}:${ss.toString().padStart(2, '0')}`;
 }
 
-export function AudioPlayer({ playing, currentTime, duration, onPlayPause }: AudioPlayerProps) {
+export function AudioPlayer({ playing, currentTime, duration, finished, onPlayPause, onReplay }: AudioPlayerProps) {
   const __ = useT();
-  const progress = duration > 0 ? currentTime / duration : 0;
+  const progress = duration > 0 ? Math.min(currentTime / duration, 1) : 0;
 
   return (
     <View style={styles.container}>
@@ -33,17 +35,30 @@ export function AudioPlayer({ playing, currentTime, duration, onPlayPause }: Aud
         </View>
       </View>
 
-      <TouchableOpacity
-        style={[styles.playButton, playing && styles.playButtonActive]}
-        onPress={onPlayPause}
-        activeOpacity={0.7}
-      >
-        <Text style={styles.playIcon}>{playing ? '⏸' : '▶'}</Text>
-      </TouchableOpacity>
+      {finished ? (
+        <TouchableOpacity
+          style={styles.replayButton}
+          onPress={onReplay}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.replayIcon}>↻</Text>
+          <Text style={styles.replayLabel}>{__('replay')}</Text>
+        </TouchableOpacity>
+      ) : (
+        <>
+          <TouchableOpacity
+            style={[styles.playButton, playing && styles.playButtonActive]}
+            onPress={onPlayPause}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.playIcon}>{playing ? '⏸' : '▶'}</Text>
+          </TouchableOpacity>
 
-      <Text style={styles.statusText}>
-        {playing ? __('playingPreview') : __('paused')}
-      </Text>
+          <Text style={styles.statusText}>
+            {playing ? __('playingPreview') : __('paused')}
+          </Text>
+        </>
+      )}
     </View>
   );
 }
@@ -101,5 +116,25 @@ const styles = StyleSheet.create({
     marginTop: theme.spacing.md,
     color: theme.colors.textSecondary,
     fontSize: theme.fontSize.sm,
+  },
+  replayButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: theme.spacing.sm,
+    backgroundColor: theme.colors.card,
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.xl,
+    borderRadius: theme.borderRadius.full,
+    borderWidth: 1,
+    borderColor: theme.colors.primary,
+  },
+  replayIcon: {
+    fontSize: 24,
+    color: theme.colors.primary,
+  },
+  replayLabel: {
+    color: theme.colors.primary,
+    fontSize: theme.fontSize.lg,
+    fontWeight: '700',
   },
 });
