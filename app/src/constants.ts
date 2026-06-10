@@ -1,6 +1,6 @@
 export const APP_NAME = 'اسمع';
 
-export const APP_VERSION = '3.3.0';
+export const APP_VERSION = '0.1';
 
 export type DecadeKey = '70s' | '80s' | '90s';
 export type RegionKey = 'egypt' | 'levant' | 'gulf' | 'iraq' | 'maghreb';
