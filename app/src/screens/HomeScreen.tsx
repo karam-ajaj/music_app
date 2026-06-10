@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { theme } from '../theme';
-import { DecadeKey, RegionKey, ALL_DECADES, ALL_REGIONS, DECADE_LABELS, REGIONS } from '../constants';
+import { APP_VERSION, DecadeKey, RegionKey, ALL_DECADES, ALL_REGIONS, DECADE_LABELS, REGIONS } from '../constants';
 import { useT, useLang } from '../../App';
 
 interface HomeScreenProps {
@@ -112,7 +112,7 @@ export function HomeScreen({ onStart }: HomeScreenProps) {
         <Text style={styles.startButtonText}>{__('startGame')}</Text>
       </TouchableOpacity>
 
-      <Text style={styles.footer}>{__('poweredBy')}</Text>
+      <Text style={styles.footer}>v{APP_VERSION}</Text>
     </View>
   );
 }

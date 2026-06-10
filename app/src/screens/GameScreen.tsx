@@ -179,13 +179,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   backBtn: {
-    paddingVertical: theme.spacing.xs,
+    paddingVertical: theme.spacing.sm,
     paddingRight: theme.spacing.md,
   },
   backBtnText: {
     color: theme.colors.primary,
-    fontSize: theme.fontSize.sm,
-    fontWeight: '600',
+    fontSize: theme.fontSize.lg,
+    fontWeight: '700',
   },
   counter: {
     color: theme.colors.textMuted,
